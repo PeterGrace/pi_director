@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+MAC=$(ip link show eth0 | grep ether|awk '{print $2}')
+
+unclutter &
+matchbox-window-manager &
+/usr/bin/chromium --kiosk --incognito --window-position=0,0 --window-size=1920,1080 http://pi_director/go/${MAC} &
+~/keydown.sh
+
