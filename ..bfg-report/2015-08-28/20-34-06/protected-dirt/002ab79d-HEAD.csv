@@ -1,4 +1,0 @@
-f7d74ca45b6c1dd6913efaacb112c6ef63492d4c,MODIFY,regular-file,client_agent/pifm_agent.py,1853,11
-95005ffa8e0d2fcfe86500a61da28b6d94fa15d3,MODIFY,regular-file,client_agent/xsession,256,6
-269fcfd61cc9beff6bba2f89b5023e553b9976bf,MODIFY,regular-file,pi_director/scripts/initializedb.py,959,39
-9f492fa9b22964cfcb7ed8c6202ce2a1f4e31e02,MODIFY,regular-file,pi_director/views/views.py,1260,24
