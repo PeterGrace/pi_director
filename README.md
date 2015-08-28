@@ -1,14 +1,7 @@
-pi_director README
-==================
+pi_director 
+===========
 
 Getting Started
 ---------------
 
-- cd <directory containing this file>
-
-- $VENV/bin/python setup.py develop
-
-- $VENV/bin/initialize_pi_director_db development.ini
-
-- $VENV/bin/pserve development.ini
-
+- This app works best when run inside a docker container.  Build it with `docker build -t pifm .` then run once built with `docker run -d -p <port>:6543 pifm` where <port> is the tcp port you want the daemon to run on.
