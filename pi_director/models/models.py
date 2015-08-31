@@ -4,7 +4,8 @@ from sqlalchemy import (
     Integer,
     Text,
     Boolean,
-    DateTime
+    DateTime,
+    Binary
     )
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -27,3 +28,8 @@ class MyModel(Base):
     landscape = Column(Boolean)
     description = Column(Text)
     lastseen = Column(DateTime)
+
+class Screenshot(Base):
+    __tablename__ = 'PiScreens'
+    uuid = Column(Text, primary_key=True)
+    image = Column(Binary)    
