@@ -2,6 +2,7 @@
 <HEAD>
   <link rel="stylesheet" href="${request.static_url('pi_director:static/css/bootstrap.css')}" type="text/css" media="screen" charset="utf-8" />
   <link rel="stylesheet" href="${request.static_url('pi_director:static/css/bootstrap-theme.css')}" type="text/css" media="screen" charset="utf-8" />
+  <link rel="stylesheet" href="${request.static_url('pi_director:static/css/hover-screenshot.css')}" type="text/css" media="screen" charset="utf-8" />
 </HEAD>
 <BODY>
 <script>

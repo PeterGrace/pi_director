@@ -19,7 +19,7 @@
               <tbody>
 %for pi in pis:
                 <tr>
-                  <td>${pi.uuid}</td>
+                  <td><span id="screenshotMO"><img src="${request.static_url('pi_director:static/nofound.jpg')}">${pi.uuid}</span></td>
 				  <td>${pi.description}</td>
 				  <td>${pi.lastseen}</td>
                   <td>${pi.url}</td>

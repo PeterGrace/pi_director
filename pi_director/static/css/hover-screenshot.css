@@ -1,0 +1,19 @@
+  #screenshotMO {
+        display: inline;
+        position: relative;
+    }
+    
+    #screenshotMO img {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%);
+        bottom: 1em;
+        opacity: 0;
+        pointer-events: none;
+        transition-duration: 800ms;    
+    }
+    
+    #screenshotMO:hover img {
+        opacity: 1;
+        transition-duration: 400ms;
+    }
