@@ -1,5 +1,8 @@
 from pyramid.response import Response
-from pyramid.view import view_config
+from pyramid.view import view_config, forbidden_view_config
+from pyramid.security import authenticated_userid
+from velruse import login_url
+
 import pyramid.httpexceptions as exc
 import logging
 import sqlalchemy.exc
@@ -9,11 +12,35 @@ from pi_director.models.models import (
     MyModel,
     )
 
+from pi_director.models.UserModel import UserModel
+
+from pi_director.security import (
+    groupfinder,
+    )
+
 from pi_director.controllers.controllers import (
     get_pis,
     )
 
-@view_config(route_name='home', renderer="pi_director:templates/home.mak",permission="user")
+@forbidden_view_config()
+def forbidden(request):
+    logging.info("Going into forbidden")
+    userid=authenticated_userid(request)
+    if userid:
+       logging.info("User exists but some other problem occured, FORBIDDEN.")
+       group=groupfinder(userid,request)
+       logging.info("User {user} access level {access}".format(user=userid,access=group))
+       return Response("Forbidden")
+
+    if groupfinder(None,request) is None:
+        request.session['goingto']=request.path
+        logging.info("Should be shunting to login page")
+        loc = request.route_url('velruse.google-login', _query=(('next', request.path),))
+        return exc.HTTPFound(location=loc)
+
+
+
+@view_config(route_name='home', renderer="pi_director:templates/home.mak",permission="admin")
 def view_home(request):
     logged_in=authenticated_userid(request)
     loginurl = login_url(request, 'google')

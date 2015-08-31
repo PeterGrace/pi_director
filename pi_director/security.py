@@ -15,10 +15,10 @@ def LookupUser(request):
     return None
 
 AccessLevels = {
-   -1: "group:invalid",
-   0: "g:unregistered",
+   -1: "invalid",
+   0: "unregistered",
    1: "g:user",
-   2: "g:admin",
+   2: "g:admin"
 }
 
 def groupfinder(userid,request):

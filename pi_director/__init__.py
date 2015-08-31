@@ -16,13 +16,15 @@ from pyramid.session import SignedCookieSessionFactory
 from .security import (groupfinder, LookupUser)
 
 class Root(object):
+    __name__ = ''
+    __parent__ = None
     __acl__ = [
         (Allow, Authenticated, 'user'),
+        (Allow, 'g:admin', 'admin'),
     ]
 
     def __init__(self, request):
         pass
-
 
 
 def main(global_config, **settings):
@@ -38,17 +40,17 @@ def main(global_config, **settings):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
-    config = Configurator(settings=settings)
+    config = Configurator(settings=settings,root_factory=Root)
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
     config.include('velruse.providers.google_oauth2')
-    session_factory = session_factory_from_settings(settings)
     config.set_session_factory(session_factory)
     config.add_google_oauth2_login_from_settings(prefix='velruse.google.')
     config.include('cornice')
     config.include('pyramid_mako')
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
+    config.add_route('logout', '/logout')
     config.add_route('redirectme', '/go/{uid}')
     config.add_route('ajax_set_pi','/ajax/set_pi/{uid}/{url}')
     config.add_route('ajax_get_pi','/ajax/get_pi/{uid}')
