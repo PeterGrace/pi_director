@@ -6,6 +6,7 @@
 - copy .xsession to ~pi
 - copy keydown.sh to ~pi
 - copy pifm_agent.py to ~pi
+- download, compile and copy fb2png to /home/pi (https://github.com/AndrewFromMelbourne/fb2png)
 - sudo pip install requests (requests is needed for pifm_agent.py to work)
 - sudo pip install sh (sh is used for pifm_agent)
 - add crontab for pifm_agent.py to run every minute

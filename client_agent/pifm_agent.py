@@ -35,11 +35,11 @@ mac = getmac('eth0')
 requests.get(PIFM_HOST+'/api/v1/ping/{mac}'.format(mac=mac))
 
 '''push screenshot to server'''
-img_raw = sudo('cat', '/dev/fb0')
+sudo('/home/pi/fb2png','-p','/dev/shm/fb.png')
 # /api/v1/screen/{macaddress}
-payload = {'screenshot': img_raw}
+filelist = { 'screenshot': open('/dev/shm/fb.png','rb') }
 img_response = requests.post(PIFM_HOST+'/api/v1/screen/{mac}'.format(mac=mac),
-                             data=payload)
+                            files=filelist)
 
 '''Compare cache to newest results'''
 r_newurl = requests.get(PIFM_HOST+'/ajax/PiUrl/{mac}'.format(mac=mac))
