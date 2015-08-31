@@ -19,7 +19,7 @@
               <tbody>
 %for pi in pis:
                 <tr>
-                  <td><span id="screenshotMO"><img src="${request.resource_url(request.context,'/api/v1/screen/'+pi.uuid)}">${pi.uuid}</span></td>
+                  <td><span id="screenshotMO" data-toggle="tooltip" data-placement="bottom" title="<img src='${request.resource_url(request.context,'/api/v1/screen/'+pi.uuid)}' height=270 width=480>">${pi.uuid}</span></td>
 				  <td>${pi.description}</td>
 				  <td>${pi.lastseen}</td>
                   <td>${pi.url}</td>
@@ -154,5 +154,8 @@ addLoadEvent(function() {
 		});
 	});
 });
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip({ html: true})
+})
 </script>
 </%block>
