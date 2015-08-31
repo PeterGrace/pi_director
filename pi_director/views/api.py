@@ -4,6 +4,7 @@ from cornice import Service
 import logging
 import sqlalchemy.exc
 from datetime import datetime
+from io import BytesIO
 
 from pi_director.models.models import (
     DBSession,
@@ -38,10 +39,10 @@ def view_api_ping(request):
 def view_api_screenshow_show(request):
     uid=request.matchdict['uid']
     shot=DBSession.query(Screenshot).filter(Screenshot.uuid==uid).first()
-    response = Response(content_type='image/png')
-    response.app_iter=shot.image
-    response.content_length = len(shot.image)
-    return response
+    with BytesIO() as ss:
+        ss.write(shot.image)
+        response = Response(content_type='image/png',content_length=len(ss.getvalue()),body=ss.getvalue())
+        return response
 
 @screenshot.post()
 def view_api_screenshot_save(request):

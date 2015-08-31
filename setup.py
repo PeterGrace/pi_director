@@ -17,7 +17,8 @@ requires = [
     'zope.sqlalchemy',
     'waitress',
     'cornice',
-    'gunicorn'
+    'gunicorn',
+    'eventlet'
     ]
 
 setup(name='pi_director',
