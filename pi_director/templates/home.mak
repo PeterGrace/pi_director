@@ -3,7 +3,7 @@
 
 %if pis != None:
           <h2 class="sub-header">Current Fleet</h2>
-          <div class="table-responsive">
+          <div class="table-responsive" style="overflow-x: visible;">
             <table class="table table-striped" id="PiTable">
               <thead>
                 <tr>
@@ -19,7 +19,7 @@
               <tbody>
 %for pi in pis:
                 <tr>
-                  <td>${pi.uuid}</td>
+                  <td><span id="screenshotMO"><img src="${request.resource_url(request.context,'/api/v1/screen/'+pi.uuid)}">${pi.uuid}</span></td>
 				  <td>${pi.description}</td>
 				  <td>${pi.lastseen}</td>
                   <td>${pi.url}</td>

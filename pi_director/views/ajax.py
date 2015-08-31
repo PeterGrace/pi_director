@@ -33,7 +33,7 @@ def view_json_get_pi(request):
     rowdict['url']=row.url
     rowdict['description']=row.description
     rowdict['landscape']=row.landscape
-    rowdict['lastseen']=row.lastseen
+    rowdict['lastseen']=str(row.lastseen)
     return rowdict
 
 @editMAC.delete()
