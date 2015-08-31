@@ -5,6 +5,7 @@ import pyramid.httpexceptions as exc
 import logging
 import sqlalchemy.exc
 import pdb
+from datetime import datetime
 
 from pi_director.models.models import (
     DBSession,
@@ -24,11 +25,18 @@ def view_json_get_pi(request):
         row.url="http://www.stackexchange.com"
         row.landscape=True
         row.description=""
+        row.lastseen=datetime.now()
         DBSession.add(row)
         DBSession.flush()
+
+    try:
+        secs = (datetime.now()-row.lastseen).total_seconds()
+    except TypeError:
+        secs = -1    
     rowdict={}
     rowdict['uuid']=row.uuid
     rowdict['url']=row.url
+    rowdict['lastseen']=secs
     rowdict['description']=row.description
     rowdict['landscape']=row.landscape
     return rowdict
