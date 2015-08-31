@@ -40,6 +40,7 @@ def view_api_screenshow_show(request):
     shot=DBSession.query(Screenshot).filter(Screenshot.uuid==uid).first()
     response = Response(content_type='image/png')
     response.app_iter=shot.image
+    response.content_length = len(shot.image)
     return response
 
 @screenshot.post()
