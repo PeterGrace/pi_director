@@ -21,7 +21,7 @@
                 <tr>
                   <td>${pi.uuid}</td>
 				  <td>${pi.description}</td>
-				  <td>${pi.lastseen} Seconds Ago</td>
+				  <td>${pi.lastseen}</td>
                   <td>${pi.url}</td>
 				  %if pi.landscape == True:
 				  	<td><span class="glyphicon glyphicon-ok-circle"></span></td>
