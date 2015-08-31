@@ -13,10 +13,12 @@ from pi_director.controllers.controllers import (
     get_pis,
     )
 
-@view_config(route_name='home', renderer="pi_director:templates/home.mak")
+@view_config(route_name='home', renderer="pi_director:templates/home.mak",permission="user")
 def view_home(request):
+    logged_in=authenticated_userid(request)
+    loginurl = login_url(request, 'google')
     PiList=get_pis()
-    return({'pis':PiList})
+    return {"loginurl": loginurl,"logged_in":logged_in,"logouturl": request.route_url('logout'),'pis':PiList}
 
 @view_config(route_name='redirectme')
 def redirect_me(request):
