@@ -4,6 +4,7 @@ from sqlalchemy import (
     Integer,
     Text,
     Boolean,
+    DateTime
     )
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -25,3 +26,4 @@ class MyModel(Base):
     url = Column(Text)
     landscape = Column(Boolean)
     description = Column(Text)
+    lastseen = Column(DateTime)

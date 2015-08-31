@@ -26,8 +26,13 @@ if os.path.exists(CACHE_FILE):
 else:
     cache={}
 
-'''Compare cache to newest results'''
+'''Get mac address'''    
 mac=getmac('eth0')
+
+'''Send ping to server'''
+requests.get(PIFM_HOST+'/api/v1/ping/{mac}'.format(mac=mac))
+
+'''Compare cache to newest results'''
 r_newurl=requests.get(PIFM_HOST+'/ajax/PiUrl/{mac}'.format(mac=mac))
 piurl=json.loads(r_newurl.text)
 try:

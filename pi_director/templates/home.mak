@@ -9,6 +9,7 @@
                 <tr>
                   <th>MAC</th>
 				  <th>Description</th>
+				  <th>Last Seen</th>
                   <th>URL</th>
 				  <th>Landscape Mode</th>
 				  <th>Edit</th>
@@ -20,6 +21,7 @@
                 <tr>
                   <td>${pi.uuid}</td>
 				  <td>${pi.description}</td>
+				  <td>${pi.lastseen}</td>
                   <td>${pi.url}</td>
 				  %if pi.landscape == True:
 				  	<td><span class="glyphicon glyphicon-ok-circle"></span></td>

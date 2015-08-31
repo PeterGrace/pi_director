@@ -5,6 +5,7 @@ import pyramid.httpexceptions as exc
 import logging
 import sqlalchemy.exc
 import pdb
+from datetime import datetime
 
 from pi_director.models.models import (
     DBSession,
@@ -23,6 +24,7 @@ def view_json_get_pi(request):
         row.uuid=uid
         row.url="http://www.stackexchange.com"
         row.landscape=True
+        row.lastseen=datetime.now()
         row.description=""
         DBSession.add(row)
         DBSession.flush()
@@ -31,6 +33,7 @@ def view_json_get_pi(request):
     rowdict['url']=row.url
     rowdict['description']=row.description
     rowdict['landscape']=row.landscape
+    rowdict['lastseen']=row.lastseen
     return rowdict
 
 @editMAC.delete()
