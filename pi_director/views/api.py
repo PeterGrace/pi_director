@@ -8,11 +8,12 @@ from datetime import datetime
 from pi_director.models.models import (
     DBSession,
     MyModel,
+    Screenshot
     )
 
+screenshot = Service(name='pi_screen', path='/api/v1/screen/{uid}', description="Service to handle insertion and deletion of screenshots")
 
 ping = Service(name='pi_ping', path='/api/v1/ping/{uid}', description="Enable tracking of pi last seen")
-
 
 @ping.get()
 def view_api_ping(request):
@@ -30,6 +31,31 @@ def view_api_ping(request):
 
     row.lastseen=now
     DBSession.add(row)
+    DBSession.flush()
+
+
+@screenshot.get()
+def view_api_screenshow_show(request):
+    uid=request.matchdict['uid']
+    shot=DBSession.query(Screenshot).filter(Screenshot.uuid==uid).first()
+    #response = Response(content_type='image/*',content_disposition='inline')
+    response = Response()
+    response.app_iter=shot.image
+    return response
+
+@screenshot.post()
+def view_api_screenshot_save(request):
+    uid=request.matchdict['uid']
+    imgblob=request.POST['screenshot'].file
+
+    '''first, delete previous screenshot'''
+    DBSession.query(Screenshot).filter(Screenshot.uuid==uid).delete()
+
+    '''Now, lets make a new screenshot'''
+    foo=Screenshot()
+    foo.uuid=uid
+    foo.image=imgblob.read()
+    DBSession.add(foo)
     DBSession.flush()
 
 
