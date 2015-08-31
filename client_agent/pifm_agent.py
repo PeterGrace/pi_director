@@ -34,6 +34,13 @@ mac = getmac('eth0')
 '''Send ping to server'''
 requests.get(PIFM_HOST+'/api/v1/ping/{mac}'.format(mac=mac))
 
+'''push screenshot to server'''
+img_raw = sudo('cat', '/dev/fb0')
+# /api/v1/screen/{macaddress}
+payload = {'screenshot': img_raw}
+img_response = requests.post(PIFM_HOST+'/api/v1/screen/{mac}'.format(mac=mac),
+                             data=payload)
+
 '''Compare cache to newest results'''
 r_newurl = requests.get(PIFM_HOST+'/ajax/PiUrl/{mac}'.format(mac=mac))
 piurl = json.loads(r_newurl.text)
