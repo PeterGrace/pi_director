@@ -38,8 +38,7 @@ def view_api_ping(request):
 def view_api_screenshow_show(request):
     uid=request.matchdict['uid']
     shot=DBSession.query(Screenshot).filter(Screenshot.uuid==uid).first()
-    #response = Response(content_type='image/*',content_disposition='inline')
-    response = Response()
+    response = Response(content_type='image/png')
     response.app_iter=shot.image
     return response
 
