@@ -11,7 +11,13 @@ from pi_director.models.models import (
     DBSession,
     MyModel,
     )
+from pi_director.controllers.user_controls import (
+    authorize_user,
+    delete_user
+    )
 
+
+AuthUser = Service(name='AuthUser', path='/ajax/User/{email}', description="Set User authentication")
 
 editMAC = Service(name='PiUrl', path='/ajax/PiUrl/{uid}', description="Get/Set Pi URL Info")
 
@@ -62,3 +68,14 @@ def view_json_set_pi(request):
     rowdict['landscape']=row.landscape
     return rowdict
 
+@AuthUser.post()
+def view_ajax_set_user_level(request):
+    email=request.matchdict['email']
+    authorize_user(email)
+    return("{'status':'OK'}")
+
+@AuthUser.delete()
+def view_ajax_delete_user(request):
+    email=request.matchdict['email']
+    delete_user(email)
+    return("{'status':'OK'}")

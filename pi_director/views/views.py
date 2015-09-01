@@ -21,6 +21,7 @@ from pi_director.security import (
 from pi_director.controllers.controllers import (
     get_pis,
     )
+from pi_director.controllers.user_controls import get_users
 
 @forbidden_view_config()
 def forbidden(request):
@@ -46,6 +47,13 @@ def view_home(request):
     loginurl = login_url(request, 'google')
     PiList=get_pis()
     return {"loginurl": loginurl,"logged_in":logged_in,"logouturl": request.route_url('logout'),'pis':PiList}
+
+@view_config(route_name='users', renderer="pi_director:templates/user.mak",permission="admin")
+def view_users(request):
+    logged_in=authenticated_userid(request)
+    loginurl = login_url(request, 'google')
+    UserList = get_users()
+    return {"loginurl": loginurl,"logged_in":logged_in,"logouturl": request.route_url('logout'),'users':UserList}
 
 @view_config(route_name='redirectme')
 def redirect_me(request):

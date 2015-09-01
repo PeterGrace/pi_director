@@ -50,6 +50,7 @@ def main(global_config, **settings):
     config.include('pyramid_mako')
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
+    config.add_route('users', '/users')
     config.add_route('logout', '/logout')
     config.add_route('redirectme', '/go/{uid}')
     config.add_route('ajax_set_pi','/ajax/set_pi/{uid}/{url}')
