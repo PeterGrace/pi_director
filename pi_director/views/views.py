@@ -2,6 +2,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, forbidden_view_config
 from pyramid.security import authenticated_userid
 from velruse import login_url
+import re
 
 import pyramid.httpexceptions as exc
 import logging
@@ -23,15 +24,20 @@ from pi_director.controllers.controllers import (
     )
 from pi_director.controllers.user_controls import get_users
 
-@forbidden_view_config()
+@forbidden_view_config(renderer="pi_director:templates/forbidden.mak")
 def forbidden(request):
     logging.info("Going into forbidden")
+    m=re.match("^/?(ajax|api).*$",request.path)
+    if m != None:
+        '''we're trying to hit an api or ajax query without authentication'''
+        return Response("{'status':'Forbidden'}")
+
     userid=authenticated_userid(request)
     if userid:
        logging.info("User exists but some other problem occured, FORBIDDEN.")
        group=groupfinder(userid,request)
        logging.info("User {user} access level {access}".format(user=userid,access=group))
-       return Response("Forbidden")
+       return ("")
 
     if groupfinder(None,request) is None:
         request.session['goingto']=request.path
