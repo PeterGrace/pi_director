@@ -6,7 +6,7 @@ from pi_director.models.models import (
     Base,
     )
 
-from pyramid.security import Allow, Authenticated
+from pyramid.security import Allow, Authenticated, Everyone
 
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -19,6 +19,7 @@ class Root(object):
     __name__ = ''
     __parent__ = None
     __acl__ = [
+        (Allow, Everyone, 'anon'),
         (Allow, Authenticated, 'user'),
         (Allow, 'g:admin', 'admin'),
     ]
