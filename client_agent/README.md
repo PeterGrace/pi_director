@@ -1,18 +1,28 @@
-- in raspi-config, enable ssh to pi
-- in raspi-config, specify boot to desktop
-- ssh into pi
-- sudo apt-get -y update
-- sudo apt-get -y install unclutter xdotool matchbox-window-manager chromium python-pip
-- copy .xsession to ~pi
-- copy keydown.sh to ~pi
-- copy pifm_agent.py to ~pi
-- download, compile and copy fb2png to /home/pi (https://github.com/AndrewFromMelbourne/fb2png)
-- sudo pip install requests (requests is needed for pifm_agent.py to work)
-- sudo pip install sh (sh is used for pifm_agent)
-- add crontab for pifm_agent.py to run every minute
-- add display_rotate=0 to end of /boot/config.txt
-- make sure url in .xsession and pifm_agent reflects the right instance of pifm you wish to talk to
+pi_director client agent
+===========
 
--- At this point, when the crontab fires, it will automatically register the mac address into the configured web instance, with a default website of www.stackexchange.com.  From there, we can affect what is displayed.  
+# Installation
+
+- Run `sudo raspi-config`, and enable these settings:
+  - Enable SSH by going to `Advanced Options > SSH > Enable`
+  - Enable boot to Desktop by going to `Enable Boot to Desktop/Scratch > Desktop Log in as user 'pi' at the graphical desktop`
+  - Choose Finish and reboot the Pi when prompted
+- SSH into the Pi
+- Run `sudo apt-get -y update`
+- Then run `sudo apt-get -y install unclutter xdotool matchbox-window-manager chromium python-pip`
+- Copy the `.xsession` to `~/.xsession`
+- Copy `keydown.sh` to `/home/pi`
+- Copy `pifm_agent.py` to `/home/pi`
+- Run `mkdir /home/pi/fb2png_source`, then `cd /home/pi/fb2png_source`
+- Run `git clone https://github.com/AndrewFromMelbourne/fb2png`
+- Run `make`, and then `cp fb2png /home/pi/fb2png`
+- Install some Python libraries
+  - `sudo pip install requests` (requests is needed for pifm_agent.py to work)
+  - `sudo pip install sh` (sh is used for pifm_agent)
+- Add crontab for pifm_agent.py to run every minute. Type `crontab -e`, then `* * * * * /usr/bin/python /home/pi/pifm_agent.py >/dev/null 2>&1` and save and close the file. 
+- Run `sudo nano /boot/config.txt` and add display_rotate=0 to end
+- Make sure the URL in `~/.xsession` and the variable `PIFM_HOST ` inside `/home/pi/pifm_agent.py` reflect the right URL instance of PIFM you wish to manage this Pi from.
+
+-- At this point, when the crontab fires, it will automatically register the MAC address into the configured web instance, with a default website of www.stackexchange.com. From there, we can affect what is displayed.  
 
 BEWARE -- the machine will reboot the first time as the cache gets proper settings saved.
