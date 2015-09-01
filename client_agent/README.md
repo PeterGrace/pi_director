@@ -3,8 +3,10 @@ pi_director client agent
 
 # Installation
 
-- Run `sudo raspi-config`, and enable SSH
-- Also in `sudo raspi-config`, specify boot to desktop
+- Run `sudo raspi-config`, and enable these settings:
+  - Enable SSH by going to `Advanced Options > SSH > Enable`
+  - Enable boot to Desktop by going to `Enable Boot to Desktop/Scratch > Desktop Log in as user 'pi' at the graphical desktop`
+  - Choose Finish and reboot the Pi when prompted
 - SSH into the Pi
 - Run `sudo apt-get -y update`
 - Then run `sudo apt-get -y install unclutter xdotool matchbox-window-manager chromium python-pip`
