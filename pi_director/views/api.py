@@ -12,9 +12,13 @@ from pi_director.models.models import (
     Screenshot
     )
 
+from pi_director.controllers.user_controls import make_an_admin
+
 screenshot = Service(name='pi_screen', path='/api/v1/screen/{uid}', description="Service to handle insertion and deletion of screenshots")
 
 ping = Service(name='pi_ping', path='/api/v1/ping/{uid}', description="Enable tracking of pi last seen")
+
+authme = Service(name='user_create', path='/api/v1/authorize/{email}', description="Create new admin if none exists already")
 
 @ping.get(permission='anon')
 def view_api_ping(request):
@@ -60,3 +64,7 @@ def view_api_screenshot_save(request):
     DBSession.flush()
 
 
+@authme.get(permission='anon')
+def view_api_create_user(request):
+
+    return make_an_admin(request)
