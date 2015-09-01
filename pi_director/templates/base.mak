@@ -1,6 +1,7 @@
 <HTML>
 <HEAD>
   <title>Pi Fleet Management</title>
+  <link rel="shortcut icon" type="image/png" href="${request.static_url('pi_director:static/peng-32.png')}" />
   <link rel="stylesheet" href="${request.static_url('pi_director:static/css/bootstrap.css')}" type="text/css" media="screen" charset="utf-8" />
   <link rel="stylesheet" href="${request.static_url('pi_director:static/css/bootstrap-theme.css')}" type="text/css" media="screen" charset="utf-8" />
   <link rel="stylesheet" href="${request.static_url('pi_director:static/css/hover-screenshot.css')}" type="text/css" media="screen" charset="utf-8" />
