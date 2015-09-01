@@ -28,6 +28,10 @@ def make_an_admin(request):
         msg="User already an admin: {user}".format(user=res.email)
         return False
     user=DBSession.query(UserModel).filter(UserModel.email==email).first()
+    if user == None:
+        user=UserModel()
+        user.email=email
+        DBSession.add(user)
     user.AccessLevel=2
     DBSession.flush()    
     return True
