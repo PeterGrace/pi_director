@@ -1,14 +1,15 @@
   #screenshotMO {
-        display: inline;
-        position: relative;
+        /* display: inline; */
+        /* position: relative; */
+		display: inline-block;
     }
     
     #screenshotMO img {
-        position: absolute;
-        left: 50%;
-        transform: translate(-50%);
+        /* position: absolute; */
+        /* left: 50%; */
+        /* transform: translate(-50%); */
+        /* opacity: 0; */
         bottom: 1em;
-        opacity: 0;
         pointer-events: none;
         transition-duration: 800ms;    
     }
@@ -17,3 +18,9 @@
         opacity: 1;
         transition-duration: 400ms;
     }
+
+	.tooltip-inner{
+		max-width:500px;
+		padding:3px 3px;
+	}
+	
