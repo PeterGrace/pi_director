@@ -1,5 +1,9 @@
 from pyramid.response import Response
-from pyramid.view import view_config
+from pyramid.view import view_config, forbidden_view_config
+from pyramid.security import authenticated_userid
+from velruse import login_url
+import re
+
 import pyramid.httpexceptions as exc
 import logging
 import sqlalchemy.exc
@@ -9,14 +13,54 @@ from pi_director.models.models import (
     MyModel,
     )
 
+from pi_director.models.UserModel import UserModel
+
+from pi_director.security import (
+    groupfinder,
+    )
+
 from pi_director.controllers.controllers import (
     get_pis,
     )
+from pi_director.controllers.user_controls import get_users
 
-@view_config(route_name='home', renderer="pi_director:templates/home.mak")
+@forbidden_view_config(renderer="pi_director:templates/forbidden.mak")
+def forbidden(request):
+    logging.info("Going into forbidden")
+    m=re.match("^/?(ajax|api).*$",request.path)
+    if m != None:
+        '''we're trying to hit an api or ajax query without authentication'''
+        logging.warn("Someone tried to hit an ajax/api without authentication.  Route: {route}".format(route=request.path))
+        return Response("{'status':'Forbidden'}")
+
+    userid=authenticated_userid(request)
+    if userid:
+       logging.info("User exists but some other problem occured, FORBIDDEN.")
+       group=groupfinder(userid,request)
+       logging.info("User {user} access level {access}".format(user=userid,access=group))
+       return ("")
+
+    if groupfinder(None,request) is None:
+        request.session['goingto']=request.path
+        logging.info("Should be shunting to login page")
+        loc = request.route_url('velruse.google-login', _query=(('next', request.path),))
+        return exc.HTTPFound(location=loc)
+
+
+
+@view_config(route_name='home', renderer="pi_director:templates/home.mak",permission="admin")
 def view_home(request):
+    logged_in=authenticated_userid(request)
+    loginurl = login_url(request, 'google')
     PiList=get_pis()
-    return({'pis':PiList})
+    return {"loginurl": loginurl,"logged_in":logged_in,"logouturl": request.route_url('logout'),'pis':PiList}
+
+@view_config(route_name='users', renderer="pi_director:templates/user.mak",permission="admin")
+def view_users(request):
+    logged_in=authenticated_userid(request)
+    loginurl = login_url(request, 'google')
+    UserList = get_users()
+    return {"loginurl": loginurl,"logged_in":logged_in,"logouturl": request.route_url('logout'),'users':UserList}
 
 @view_config(route_name='redirectme')
 def redirect_me(request):

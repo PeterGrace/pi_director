@@ -16,7 +16,7 @@ screenshot = Service(name='pi_screen', path='/api/v1/screen/{uid}', description=
 
 ping = Service(name='pi_ping', path='/api/v1/ping/{uid}', description="Enable tracking of pi last seen")
 
-@ping.get()
+@ping.get(permission='anon')
 def view_api_ping(request):
     uid = request.matchdict['uid']
 
@@ -35,7 +35,7 @@ def view_api_ping(request):
     DBSession.flush()
 
 
-@screenshot.get()
+@screenshot.get(permission='admin')
 def view_api_screenshow_show(request):
     uid=request.matchdict['uid']
     shot=DBSession.query(Screenshot).filter(Screenshot.uuid==uid).first()
@@ -44,7 +44,7 @@ def view_api_screenshow_show(request):
         response = Response(content_type='image/png',content_length=len(ss.getvalue()),body=ss.getvalue())
         return response
 
-@screenshot.post()
+@screenshot.post(permission='anon')
 def view_api_screenshot_save(request):
     uid=request.matchdict['uid']
     imgblob=request.POST['screenshot'].file

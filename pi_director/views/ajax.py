@@ -11,11 +11,19 @@ from pi_director.models.models import (
     DBSession,
     MyModel,
     )
+from pi_director.controllers.user_controls import (
+    authorize_user,
+    delete_user
+    )
 
+    
+
+
+AuthUser = Service(name='AuthUser', path='/ajax/User/{email}', description="Set User authentication")
 
 editMAC = Service(name='PiUrl', path='/ajax/PiUrl/{uid}', description="Get/Set Pi URL Info")
 
-@editMAC.get()
+@editMAC.get(permission='anon')
 def view_json_get_pi(request):
     uid=request.matchdict['uid']
     row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
@@ -36,12 +44,12 @@ def view_json_get_pi(request):
     rowdict['lastseen']=str(row.lastseen)
     return rowdict
 
-@editMAC.delete()
+@editMAC.delete(permission='admin')
 def view_json_delete_pi(request):
     uid=request.matchdict['uid']
     DBSession.query(MyModel).filter(MyModel.uuid==uid).delete()
 
-@editMAC.post()
+@editMAC.post(permission='admin')
 def view_json_set_pi(request):
     uid=request.matchdict['uid']
     response=request.json_body
@@ -62,3 +70,14 @@ def view_json_set_pi(request):
     rowdict['landscape']=row.landscape
     return rowdict
 
+@AuthUser.post(permission='admin')
+def view_ajax_set_user_level(request):
+    email=request.matchdict['email']
+    authorize_user(email)
+    return("{'status':'OK'}")
+
+@AuthUser.delete(permission='admin')
+def view_ajax_delete_user(request):
+    email=request.matchdict['email']
+    delete_user(email)
+    return("{'status':'OK'}")

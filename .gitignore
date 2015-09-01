@@ -1,3 +1,5 @@
 *.pyc
 *.sqlite
 *.egg-info
+pg-dev.ini
+pg-prod.ini

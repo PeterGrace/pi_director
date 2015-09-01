@@ -18,7 +18,8 @@ requires = [
     'waitress',
     'cornice',
     'gunicorn',
-    'eventlet'
+    'eventlet',
+    'velruse'
     ]
 
 setup(name='pi_director',
