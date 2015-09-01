@@ -21,7 +21,7 @@ pi_director client agent
   - `sudo pip install sh` (sh is used for pifm_agent)
 - Add crontab for pifm_agent.py to run every minute. Type `crontab -e`, then `* * * * * /usr/bin/python /home/pi/pifm_agent.py >/dev/null 2>&1` and save and close the file. 
 - Run `sudo nano /boot/config.txt` and add display_rotate=0 to end
-- Make sure the URL in `~/.xsession` and `/home/pi/pifm_agent.py` reflect the right URL instance of PIFM you wish to manage this Pi from.
+- Make sure the URL in `~/.xsession` and the variable `PIFM_HOST ` inside `/home/pi/pifm_agent.py` reflect the right URL instance of PIFM you wish to manage this Pi from.
 
 -- At this point, when the crontab fires, it will automatically register the MAC address into the configured web instance, with a default website of www.stackexchange.com. From there, we can affect what is displayed.  
 
