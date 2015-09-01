@@ -56,5 +56,6 @@ def main(global_config, **settings):
     config.add_route('redirectme', '/go/{uid}')
     config.add_route('ajax_set_pi','/ajax/set_pi/{uid}/{url}')
     config.add_route('ajax_get_pi','/ajax/get_pi/{uid}')
+    config.add_request_method(LookupUser, 'user', reify=True)
     config.scan()
     return config.make_wsgi_app()

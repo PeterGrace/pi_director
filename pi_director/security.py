@@ -3,12 +3,12 @@ from pi_director.models.models import DBSession
 from pi_director.models.UserModel import UserModel
 from sqlalchemy.orm.exc import NoResultFound
 from pyramid.decorator import reify
-import pdb
+import logging
 
 def LookupUser(request):
   userid=authenticated_userid(request)
   try:
-    logger.debug("Looking up user session for %s", userid)
+    logging.debug("Looking up user session for %s", userid)
     UserObject = DBSession.query(UserModel).filter(UserModel.email==userid).one()
     return UserObject
   except NoResultFound, e:
