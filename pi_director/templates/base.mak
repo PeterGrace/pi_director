@@ -31,7 +31,7 @@ function addLoadEvent(func) {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Pi Fleet Management</a>
+          <span class="navbar-brand">Pi Fleet Management</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
