@@ -8,6 +8,7 @@
               <thead>
                 <tr>
                   <th>MAC</th>
+                  <th>Screen</th>
 				  <th>Description</th>
 				  <th>Last Seen</th>
                   <th>URL</th>
@@ -19,7 +20,8 @@
               <tbody>
 %for pi in pis:
                 <tr>
-                  <td><span id="screenshotMO" data-toggle="tooltip" data-placement="bottom" title="<img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=270 width=480>">${pi.uuid}</span></td>
+                  <td>${pi.uuid}</td>
+				  <td><span id="screenshotMO" data-toggle="tooltip" data-placement="bottom" title="<img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=270 width=480>"><img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=67 width=120></span></td>
 				  <td>${pi.description}</td>
 				  <td>${pi.lastseen}</td>
                   <td>${pi.url}</td>
