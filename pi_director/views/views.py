@@ -30,6 +30,7 @@ def forbidden(request):
     m=re.match("^/?(ajax|api).*$",request.path)
     if m != None:
         '''we're trying to hit an api or ajax query without authentication'''
+        logging.warn("Someone tried to hit an ajax/api without authentication.  Route: {route}".format(route=request.path))
         return Response("{'status':'Forbidden'}")
 
     userid=authenticated_userid(request)
