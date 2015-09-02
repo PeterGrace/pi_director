@@ -2,7 +2,6 @@
 import os
 import pickle
 import requests
-import pdb
 import json
 import logging
 from sh import sudo
@@ -10,6 +9,7 @@ from sh import sudo
 CACHE_FILE = "/home/pi/cache.pickle"
 PIFM_HOST = "http://pi_director"
 
+logging.basicConfig(level=logging.INFO)
 
 def getmac(interface):
 
@@ -22,13 +22,15 @@ def getmac(interface):
 
 
 '''Initialize cache'''
+original_cache={}
 if os.path.exists(CACHE_FILE):
     with open(CACHE_FILE, "rb") as f:
         cache = pickle.load(f)
 else:
     cache = {}
 
-'''Get mac address'''    
+original_cache = cache.copy()
+'''Get mac address'''
 mac = getmac('eth0')
 
 '''Send ping to server'''
@@ -47,29 +49,29 @@ piurl = json.loads(r_newurl.text)
 
 try:
     if piurl['url'] != cache['url']:
-        logging.warn("New URL requested, restarting lightdm")
+        logging.info("New URL requested, restarting lightdm")
         sudo('service', 'lightdm', 'restart')
         cache['url'] = piurl['url']
     else:
-        logging.warn("URL same as last time, nothing to see here")
+        logging.info("URL same as last time, nothing to see here")
 
     if piurl['landscape'] != cache['landscape']:
         cache['landscape'] = piurl['landscape']
         if piurl['landscape'] == True:
-            logging.warn("Landscape mode requested, setting rotate to 0")
+            logging.info("Landscape mode requested, setting rotate to 0")
             sudo('sed', '-i', 's/display_rotate.*/display_rotate=0/g',
                  '/boot/config.txt')
             should_reboot = True
         else:
-            logging.warn("Portrait mode requested, setting rotate to 3")
+            logging.info("Portrait mode requested, setting rotate to 3")
             sudo('sed', '-i', 's/display_rotate.*/display_rotate=3/g',
                  '/boot/config.txt')
             should_reboot = True
     else:
-        
+
         should_reboot = False
 except KeyError:
-    logging.error("No previous url in cache, so, we're initializing it.")
+    logging.info("No previous url in cache, so, we're initializing it.")
     cache['url'] = piurl['url']
     cache['landscape'] = piurl['landscape']
     sudo('service', 'lightdm', 'restart')
@@ -77,8 +79,12 @@ except KeyError:
 
 
 '''Commit cache to disk'''
-with open(CACHE_FILE, "wb") as f:
-    pickle.dump(cache, f)
+if cmp(cache,original_cache) != False:
+    with open(CACHE_FILE, "wb") as f:
+        logging.info("Writing back changes to pickle")
+        pickle.dump(cache, f)
+else:
+    logging.info("Cache is the same, not re-writing")
 
 if should_reboot:
     sudo('reboot')
