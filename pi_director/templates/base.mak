@@ -5,6 +5,8 @@
   <link rel="stylesheet" href="${request.static_url('pi_director:static/css/bootstrap.css')}" type="text/css" media="screen" charset="utf-8" />
   <link rel="stylesheet" href="${request.static_url('pi_director:static/css/bootstrap-theme.css')}" type="text/css" media="screen" charset="utf-8" />
   <link rel="stylesheet" href="${request.static_url('pi_director:static/css/hover-screenshot.css')}" type="text/css" media="screen" charset="utf-8" />
+  <link rel="stylesheet" href="${request.static_url('pi_director:static/css/footer.css')}" type="text/css" media="screen" charset="utf-8" />
+  <meta http-equiv="refresh" content="60">
 </HEAD>
 <BODY>
 <script>
@@ -42,6 +44,7 @@ function addLoadEvent(func) {
       </div>
     </nav>
 
+
 <div class="container">
 <%block name="BlockContent"/>
 </div> <!-- container -->
@@ -49,6 +52,16 @@ function addLoadEvent(func) {
 <script src="${request.static_url('pi_director:static/js/bootstrap.min.js')}"</script>
 <script src="${request.static_url('pi_director:static/js/bootstrap-modal.js')}"</script>
 <%block name="ScriptContent"/>
+<%
+from datetime import datetime
+time_now=datetime.now()
+%>
+<footer class="footer">
+	<div class="container">
+    	<p class="text-muted">Server time: ${time_now}</p>
+	</div>
+</footer>
+
 </BODY>
 </HTML>
 
