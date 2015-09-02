@@ -9,7 +9,7 @@ pi_director client agent
   - Choose Finish and reboot the Pi when prompted
 - SSH into the Pi
 - Run `sudo apt-get -y update`
-- Then run `sudo apt-get -y install unclutter xdotool matchbox-window-manager chromium python-pip`
+- Then run `sudo apt-get -y install unclutter xdotool matchbox-window-manager chromium python-pip imagemagick`
 - Copy the `.xsession` to `~/.xsession`
 - Copy `keydown.sh` to `/home/pi`
 - Copy `pifm_agent.py` to `/home/pi`
