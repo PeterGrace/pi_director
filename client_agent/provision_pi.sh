@@ -62,7 +62,7 @@ cd /home/pi
 pip install requests sh
 chown pi:pi -R *
 
-echo -e "* * * * *\t/home/pi/pifm_agent.py >/dev/null 2>&1" | crontab 
+echo -e "* * * * *\t/home/pi/pifm_agent.py >/dev/null 2>&1" | crontab -u pi
 echo "display_rotate=0" >> /boot/config.txt
 
 echo "If you're feeling lucky, reboot."
