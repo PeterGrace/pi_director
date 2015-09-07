@@ -1,6 +1,14 @@
 pi_director client agent
 ===========
 
+# Automated Installation
+If you would like to have the pi just set itself up automatically, execute this command:
+
+`curl https://raw.githubusercontent.com/PeterGrace/pi_director/master/client_agent/provision_pi.sh | sudo bash`
+
+This will run the provision script that automates the commands below.
+
+
 # Installation
 
 - Run `sudo raspi-config`, and enable these settings:
