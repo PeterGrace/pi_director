@@ -51,7 +51,7 @@ timediff = datetime.now() - pi.lastseen
 </div> <!-- table-responsive -->
 <button type="button" data-toggle="modal" href="#editModal" class="btn btn-lg btn-success addpi">Add Pi</button>
 
-<div class="modal fade" id="deleteModal" style="position: relative; top:auto;left: auto; margin: 0 auto;">
+<div class="modal fade" id="deleteModal">
 	<div class="modal-content">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">x</a>
@@ -67,7 +67,7 @@ timediff = datetime.now() - pi.lastseen
 	</div>
 </div>
 
-<div class="modal fade" id="editModal" style="position: relative; top:auto;left: auto; margin: 0 auto;">
+<div class="modal fade" id="editModal" style="padding-left: 100px; padding-right: 100px;">
 	<div class="modal-content">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">x</a>
