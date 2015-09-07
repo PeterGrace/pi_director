@@ -50,6 +50,7 @@ wget https://raw.githubusercontent.com/PeterGrace/pi_director/master/client_agen
 wget https://raw.githubusercontent.com/PeterGrace/pi_director/master/client_agent/refresh.sh
 wget https://raw.githubusercontent.com/PeterGrace/pi_director/master/client_agent/frozen_screen_detect.sh
 wget https://raw.githubusercontent.com/PeterGrace/pi_director/master/client_agent/pifm_agent.py
+chown pi.pi -R ~pi/.xsession ~pi/pifm_agent.py ~pi/keydown.sh ~pi/refresh.sh ~pi/frozen_screen_detect.sh
 chmod a+x .xsession keydown.sh refresh.sh frozen_screen_detect.sh pifm_agent.py
 
 mkdir /home/pi/src
