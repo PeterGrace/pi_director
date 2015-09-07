@@ -21,11 +21,14 @@
 %for pi in pis:
                 <tr>
                   <td>${pi.uuid}</td>
-				  <td><span id="screenshotMO" data-toggle="tooltip" data-placement="bottom" title="<img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=270 width=480>"><img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=67 width=120></span></td>
+				  <td><span id="screenshotMO" data-toggle="tooltip" data-placement="right" title="<img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=270 width=480>"><img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=67 width=120></span></td>
 				  <td>${pi.description}</td>
 <%
-from datetime import datetime
-timediff = datetime.now() - pi.lastseen
+from datetime import datetime, timedelta
+if pi.lastseen is None:
+	timediff = timedelta(1979,12,31,23,59,59)
+else:
+	timediff = datetime.now() - pi.lastseen
 %>
 
 % if (timediff.total_seconds() > 300):
