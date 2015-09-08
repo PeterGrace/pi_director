@@ -28,6 +28,7 @@ class MyModel(Base):
     landscape = Column(Boolean)
     description = Column(Text)
     lastseen = Column(DateTime)
+    ip = Column(Text)
 
 class Screenshot(Base):
     __tablename__ = 'PiScreens'
