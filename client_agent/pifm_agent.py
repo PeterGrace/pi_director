@@ -4,12 +4,19 @@ import pickle
 import requests
 import json
 import logging
+import socket
 from sh import sudo
 
 CACHE_FILE = "/home/pi/cache.pickle"
 PIFM_HOST = "http://pi_director"
 
 logging.basicConfig(level=logging.INFO)
+
+def get_default_ip():
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 0))  # connecting to a UDP address doesn't send packets
+        local_ip_address = s.getsockname()[0]
+        return local_ip_address
 
 def getmac(interface):
 
@@ -32,9 +39,10 @@ else:
 original_cache = cache.copy()
 '''Get mac address'''
 mac = getmac('eth0')
+ip = get_default_ip()
 
 '''Send ping to server'''
-requests.get(PIFM_HOST+'/api/v1/ping/{mac}'.format(mac=mac))
+requests.get(PIFM_HOST+'/api/v2/ping/{mac}/{ip}'.format(mac=mac,ip=ip))
 
 '''push screenshot to server'''
 sudo('/home/pi/fb2png','-p','/dev/shm/fb.png')
