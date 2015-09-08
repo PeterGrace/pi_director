@@ -20,7 +20,12 @@
               <tbody>
 %for pi in pis:
                 <tr>
+%if pi.ip == None:				
                   <td>${pi.uuid}</td>
+% else:
+                  <td>${pi.uuid} (${pi.ip})</td>
+%endif
+				  
 				  <td><span id="screenshotMO" data-toggle="tooltip" data-placement="right" title="<img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=270 width=480>"><img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=67 width=120></span></td>
 				  <td>${pi.description}</td>
 <%
