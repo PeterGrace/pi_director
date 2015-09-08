@@ -17,8 +17,29 @@ from pi_director.controllers.user_controls import make_an_admin
 screenshot = Service(name='pi_screen', path='/api/v1/screen/{uid}', description="Service to handle insertion and deletion of screenshots")
 
 ping = Service(name='pi_ping', path='/api/v1/ping/{uid}', description="Enable tracking of pi last seen")
+ping2 = Service(name='pi_pingv2', path='/api/v2/ping/{uid}/{ip}', description="Enable tracking of pi last seen and its ip address")
 
 authme = Service(name='user_create', path='/api/v1/authorize/{email}', description="Create new admin if none exists already")
+
+@ping2.get(permission='anon')
+def view_api_ping_v2(request):
+    uid = request.matchdict['uid']
+    ip = request.matchdict['ip']
+
+    now=datetime.now()
+
+    row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
+    if row==None:
+        row=MyModel()
+        row.uuid=uid
+        row.url="http://www.stackexchange.com"
+        row.landscape=True
+        row.description=""
+
+    row.lastseen=now
+    row.ip=ip
+    DBSession.add(row)
+    DBSession.flush()
 
 @ping.get(permission='anon')
 def view_api_ping(request):
