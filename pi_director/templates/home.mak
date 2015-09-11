@@ -27,7 +27,22 @@
 %endif
 				  
 				  <td><span id="screenshotMO" data-toggle="tooltip" data-placement="right" title="<img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=270 width=480>"><img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=67 width=120></span></td>
+
+
+%if len(pi.tags)==0:
 				  <td>${pi.description}</td>
+%else:
+				  <td>${pi.description}<br>
+%for tag in pi.tags:
+				<button type="button" data-id="${tag}" href="#btnTag${tag}" class="btn btn-xs btn-primary">${tag}</button></td>
+%endfor				
+		</td>
+%endif
+				
+
+
+
+
 <%
 from datetime import datetime, timedelta
 if pi.lastseen is None:
