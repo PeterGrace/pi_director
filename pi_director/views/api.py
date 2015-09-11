@@ -13,6 +13,7 @@ from pi_director.models.models import (
     )
 
 from pi_director.controllers.user_controls import make_an_admin
+from pi_director.controllers.controllers import get_pi_info
 
 screenshot = Service(name='pi_screen', path='/api/v1/screen/{uid}', description="Service to handle insertion and deletion of screenshots")
 
@@ -20,6 +21,13 @@ ping = Service(name='pi_ping', path='/api/v1/ping/{uid}', description="Enable tr
 ping2 = Service(name='pi_pingv2', path='/api/v2/ping/{uid}/{ip}', description="Enable tracking of pi last seen and its ip address")
 
 authme = Service(name='user_create', path='/api/v1/authorize/{email}', description="Create new admin if none exists already")
+
+get_cache = Service(name='get_cache',path='/api/v1/cache/{mac}', description="return data for the requested pi")
+
+@get_cache.get(permission='anon')
+def view_json_get_pi(request):
+    uid=request.matchdict['uid']
+    return get_pi_info(uid)
 
 @ping2.get(permission='anon')
 def view_api_ping_v2(request):

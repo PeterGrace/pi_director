@@ -52,7 +52,7 @@ img_response = requests.post(PIFM_HOST+'/api/v1/screen/{mac}'.format(mac=mac),
                             files=filelist)
 
 '''Compare cache to newest results'''
-r_newurl = requests.get(PIFM_HOST+'/ajax/PiUrl/{mac}'.format(mac=mac))
+r_newurl = requests.get(PIFM_HOST+'/api/v1/cache/{mac}'.format(mac=mac))
 piurl = json.loads(r_newurl.text)
 
 try:
