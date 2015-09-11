@@ -28,16 +28,8 @@
 				  
 				  <td><span id="screenshotMO" data-toggle="tooltip" data-placement="right" title="<img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=270 width=480>"><img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=67 width=120></span></td>
 
+                  <td>${pi.description}</td>
 
-%if len(pi.tags)==0:
-				  <td>${pi.description}</td>
-%else:
-				  <td>${pi.description}<br>
-%for tag in pi.tags:
-				<button type="button" data-id="${tag.tag}" href="#btnTag${tag.tag}" class="btn btn-xs btn-primary">${tag.tag}</button>
-%endfor				
-		</td>
-%endif
 				
 
 
@@ -58,7 +50,15 @@ else:
 % else:
 				  <td><div class="alert alert-info">${int(timediff.total_seconds())} seconds ago</div></td>
 % endif
+%if len(pi.tags)==0:
                   <td>${pi.url}</td>
+%else:
+				  <td>${pi.url}<br>
+%for tag in pi.tags:
+				<button type="button" data-id="${tag.tag}" href="#btnTag${tag.tag}" class="btn btn-xs btn-primary">${tag.tag}</button>
+%endfor				
+		</td>
+%endif
 				  %if pi.landscape == True:
 				  	<td><span class="glyphicon glyphicon-ok-circle"></span></td>
 			      %else:
