@@ -30,7 +30,16 @@ class MyModel(Base):
     lastseen = Column(DateTime)
     ip = Column(Text)
 
+class Tags(Base):
+    __tablename__ = 'Tags'
+    id = Column(Integer, primary_key=True)
+    tag = Column(Text)
+    uuid = Column(Text)
+    __table_args__ = (Index('idx_taglist', "tag", "uuid", unique=True), )
+
 class Screenshot(Base):
     __tablename__ = 'PiScreens'
     uuid = Column(Text, primary_key=True)
     image = Column(Binary)    
+    
+
