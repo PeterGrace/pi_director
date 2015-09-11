@@ -5,7 +5,8 @@ from sqlalchemy import (
     Text,
     Boolean,
     DateTime,
-    Binary
+    Binary,
+    ForeignKey
     )
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -13,6 +14,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
+    relationship
     )
 
 from zope.sqlalchemy import ZopeTransactionExtension
@@ -29,12 +31,13 @@ class MyModel(Base):
     description = Column(Text)
     lastseen = Column(DateTime)
     ip = Column(Text)
+    tags = relationship("Tags")
 
 class Tags(Base):
     __tablename__ = 'Tags'
     id = Column(Integer, primary_key=True)
     tag = Column(Text)
-    uuid = Column(Text)
+    uuid = Column(Text, ForeignKey('PiUrl.uuid'))
     __table_args__ = (Index('idx_taglist', "tag", "uuid", unique=True), )
 
 class Screenshot(Base):
