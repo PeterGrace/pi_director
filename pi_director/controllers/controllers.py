@@ -1,3 +1,4 @@
+import shlex
 from pi_director.models.models import (
     DBSession,
     MyModel,
@@ -7,6 +8,21 @@ from sqlalchemy import desc
 
 def get_pis():
     PiList=DBSession.query(MyModel).filter(MyModel.uuid!="default").order_by(desc(MyModel.lastseen)).all()
+    return PiList
+
+def get_tagged_pis(tags):
+    splitter=shlex.shlex(tags)
+    splitter.whitespace+=','
+    splitter.whitespace+=';'
+    splitter.whitespace_split=True
+    taglist = list(splitter)
+
+    tagged_pis=[]
+    PisWithTags=DBSession.query(Tags).filter(Tags.tag.in_(taglist)).all()
+    for pi in PisWithTags:
+        tagged_pis.append(pi.uuid)
+    
+    PiList=DBSession.query(MyModel).filter(MyModel.uuid.in_(tagged_pis)).order_by(desc(MyModel.lastseen)).all()
     return PiList
 
 def get_pi_info(uid):
