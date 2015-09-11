@@ -34,7 +34,7 @@
 %else:
 				  <td>${pi.description}<br>
 %for tag in pi.tags:
-				<button type="button" data-id="${tag}" href="#btnTag${tag}" class="btn btn-xs btn-primary">${tag}</button></td>
+				<button type="button" data-id="${tag.tag}" href="#btnTag${tag.tag}" class="btn btn-xs btn-primary">${tag.tag}</button>
 %endfor				
 		</td>
 %endif
