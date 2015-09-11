@@ -55,7 +55,7 @@ else:
 %else:
 				  <td>${pi.url}<br>
 %for tag in pi.tags:
-				<button type="button" data-id="${tag.tag}" href="#btnTag${tag.tag}" class="btn btn-xs btn-primary">${tag.tag}</button>
+				<a href="/tagged/${tag.tag}" class="btn btn-xs btn-primary">${tag.tag}</a>
 %endfor				
 		</td>
 %endif
