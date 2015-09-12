@@ -13,8 +13,7 @@
 				  <th>Last Seen</th>
                   <th>URL</th>
 				  <th>Landscape Mode</th>
-				  <th>Edit</th>
-				  <th>Delete</th>
+				  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -64,8 +63,17 @@ else:
 			      %else:
 				  	<td><span class="glyphicon glyphicon-remove-circle"></span></td>
 				  %endif
-				  <td><button type="button" data-id="${pi.uuid}" data-toggle="modal" href="#editModal" class="btn btn-xs btn-primary macedit">Edit</button></td>
-				  <td><button type="button" data-id="${pi.uuid}" data-toggle="modal" href="#deleteModal" class="btn btn-xs btn-danger macdelete">Delete</button></td>
+				  <td>
+				  <div class="dropdown">
+				  <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-${pi.uuid}" data-toggle="dropdown">Actions<span class="caret"></span></button>
+				  <ul class="dropdown-menu" aria-labelledby="dropdown-${pi.uuid}">
+				  	<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#editModal" href="#editModal" class="macedit">Edit</a>
+				  	<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#deleteModal" href="#deleteModal" class="macdelete">Delete</a>
+					<li role="separator" class="divider"</li>
+				  	<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#tagModal" href="#tagModal" class="tagedit">Tag Management</a>
+				  </ul>
+				  </div>
+				  </td>
                 </tr>
 %endfor
 %endif
@@ -73,6 +81,26 @@ else:
 </table>
 </div> <!-- table-responsive -->
 <button type="button" data-toggle="modal" href="#editModal" class="btn btn-lg btn-success addpi">Add Pi</button>
+
+<div class="modal fade" id="tagModal">
+	<div class="modal-content">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">x</a>
+			<h3> Tag Management </h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label for="modalMAC" class="control-label col-xs-2">Current tags</label>
+					<div class="col-xs-10">
+					</div>
+				</div>
+		</div>
+		<div class="modal-footer">
+			<button type="button" href="#" class="btn btn-lg btn-normal" data-dismiss="modal">Done</a>
+		</div>
+	</div>
+</div>
 
 <div class="modal fade" id="deleteModal">
 	<div class="modal-content">

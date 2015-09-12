@@ -27,6 +27,7 @@ def get_tagged_pis(tags):
 
 def get_pi_info(uid):
     tags=[]
+    uid=request.matchdict['uid']
     row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
     if row==None:
         row=MyModel()
