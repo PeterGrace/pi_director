@@ -15,6 +15,8 @@ from pi_director.models.models import (
 from pi_director.controllers.user_controls import make_an_admin
 from pi_director.controllers.controllers import get_pi_info
 
+reqcommands = Service(name='pi_reqcmds', path='/api/v2/reqcmds/{uid}', description="Service to handle arbitary commands to be run on the pi")
+
 screenshot = Service(name='pi_screen', path='/api/v1/screen/{uid}', description="Service to handle insertion and deletion of screenshots")
 
 ping = Service(name='pi_ping', path='/api/v1/ping/{uid}', description="Enable tracking of pi last seen")
@@ -92,6 +94,13 @@ def view_api_screenshot_save(request):
     DBSession.add(foo)
     DBSession.flush()
 
+@reqcommands.get(permission='anon')
+def view_api_reqcommands_get(request):
+    pass
+
+@reqcommands.post(permission='anon')
+def view_api_reqcommands_results(request):
+    pass
 
 @authme.get(permission='anon')
 def view_api_create_user(request):

@@ -51,5 +51,6 @@ def get_pi_info(uid):
     rowdict['landscape']=row.landscape
     rowdict['lastseen']=str(row.lastseen)
     rowdict['tags']=tags
+    rowdict['requested_commands']=row.requested_commands
     return rowdict
 
