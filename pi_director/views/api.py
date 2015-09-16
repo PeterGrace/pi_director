@@ -8,7 +8,7 @@ from io import BytesIO
 
 from pi_director.models.models import (
     DBSession,
-    MyModel,
+    RasPi,
     Screenshot
     )
 
@@ -38,9 +38,9 @@ def view_api_ping_v2(request):
 
     now=datetime.now()
 
-    row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
+    row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
     if row==None:
-        row=MyModel()
+        row=RasPi()
         row.uuid=uid
         row.url="http://www.stackexchange.com"
         row.landscape=True
@@ -57,9 +57,9 @@ def view_api_ping(request):
 
     now=datetime.now()
 
-    row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
+    row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
     if row==None:
-        row=MyModel()
+        row=RasPi()
         row.uuid=uid
         row.url="http://www.stackexchange.com"
         row.landscape=True

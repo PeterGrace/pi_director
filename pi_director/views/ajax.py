@@ -9,7 +9,7 @@ from datetime import datetime
 
 from pi_director.models.models import (
     DBSession,
-    MyModel,
+    RasPi,
     Tags
     )
 
@@ -35,16 +35,16 @@ def view_json_get_pi(request):
 @editMAC.delete(permission='admin')
 def view_json_delete_pi(request):
     uid=request.matchdict['uid']
-    DBSession.query(MyModel).filter(MyModel.uuid==uid).delete()
+    DBSession.query(RasPi).filter(RasPi.uuid==uid).delete()
 
 @editMAC.post(permission='admin')
 def view_json_set_pi(request):
     uid=request.matchdict['uid']
     response=request.json_body
     
-    row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
+    row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
     if row == None:
-        row=MyModel()
+        row=RasPi()
         row.uuid=uid
     row.url=response['url']
     row.description=response['description']

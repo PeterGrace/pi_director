@@ -10,7 +10,7 @@ import sqlalchemy.exc
 
 from pi_director.models.models import (
     DBSession,
-    MyModel,
+    RasPi,
     )
 
 from pi_director.models.UserModel import UserModel
@@ -76,12 +76,12 @@ def redirect_me(request):
     uid=request.matchdict['uid']
     url="http://www.stackexchange.com"
     try:
-        row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
+        row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
         if row:
             url=row.url
             logging.info("UID {uid}: {page}".format(uid=row.uuid,page=url))
         else:
-            row=MyModel()
+            row=RasPi()
             row.uuid=uid
             row.url="http://www.stackexchange.com"
             row.landscape=True

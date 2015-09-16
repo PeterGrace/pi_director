@@ -1,13 +1,13 @@
 import shlex
 from pi_director.models.models import (
     DBSession,
-    MyModel,
+    RasPi,
     Tags
     )
 from sqlalchemy import desc
 
 def get_pis():
-    PiList=DBSession.query(MyModel).filter(MyModel.uuid!="default").order_by(desc(MyModel.lastseen)).all()
+    PiList=DBSession.query(RasPi).filter(RasPi.uuid!="default").order_by(desc(RasPi.lastseen)).all()
     return PiList
 
 def get_tagged_pis(tags):
@@ -22,14 +22,14 @@ def get_tagged_pis(tags):
     for pi in PisWithTags:
         tagged_pis.append(pi.uuid)
     
-    PiList=DBSession.query(MyModel).filter(MyModel.uuid.in_(tagged_pis)).order_by(desc(MyModel.lastseen)).all()
+    PiList=DBSession.query(RasPi).filter(RasPi.uuid.in_(tagged_pis)).order_by(desc(RasPi.lastseen)).all()
     return PiList
 
 def get_pi_info(uid):
     tags=[]
-    row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
+    row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
     if row==None:
-        row=MyModel()
+        row=RasPi()
         row.uuid=uid
         row.url="http://www.stackexchange.com"
         row.landscape=True

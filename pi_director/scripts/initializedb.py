@@ -13,7 +13,7 @@ from pyramid.scripts.common import parse_vars
 
 from pi_director.models.models import (
     DBSession,
-    MyModel,
+    RasPi,
     Base,
     )
 
@@ -36,5 +36,5 @@ def main(argv=sys.argv):
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
     with transaction.manager:
-        model = MyModel(uuid='default', url="http://www.facebook.com")
+        model = RasPi(uuid='default', url="http://www.facebook.com")
         DBSession.add(model)
