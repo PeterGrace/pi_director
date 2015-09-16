@@ -34,6 +34,7 @@ class RasPi(Base):
     requested_commands = Column(Text)
     tags = relationship("Tags")
 
+
 class Tags(Base):
     __tablename__ = 'Tags'
     id = Column(Integer, primary_key=True)
@@ -41,9 +42,9 @@ class Tags(Base):
     uuid = Column(Text, ForeignKey('PiUrl.uuid'))
     __table_args__ = (Index('idx_taglist', "tag", "uuid", unique=True), )
 
+
 class Screenshot(Base):
     __tablename__ = 'PiScreens'
     uuid = Column(Text, primary_key=True)
-    image = Column(Binary)    
-    
+    image = Column(Binary)
 

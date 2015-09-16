@@ -24,7 +24,7 @@ ping2 = Service(name='pi_pingv2', path='/api/v2/ping/{uid}/{ip}', description="E
 
 authme = Service(name='user_create', path='/api/v1/authorize/{email}', description="Create new admin if none exists already")
 
-get_cache = Service(name='get_cache',path='/api/v1/cache/{mac}', description="return data for the requested pi")
+get_cache = Service(name='get_cache',path='/api/v1/cache/{uid}', description="return data for the requested pi")
 
 @get_cache.get(permission='anon')
 def view_json_get_pi(request):
