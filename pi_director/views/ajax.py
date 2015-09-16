@@ -9,8 +9,12 @@ from datetime import datetime
 
 from pi_director.models.models import (
     DBSession,
-    MyModel,
+    RasPi,
+    Tags
     )
+
+from pi_director.controllers.controllers import get_pi_info
+
 from pi_director.controllers.user_controls import (
     authorize_user,
     delete_user
@@ -25,38 +29,22 @@ editMAC = Service(name='PiUrl', path='/ajax/PiUrl/{uid}', description="Get/Set P
 
 @editMAC.get(permission='anon')
 def view_json_get_pi(request):
-    uid=request.matchdict['uid']
-    row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
-    if row==None:
-        row=MyModel()
-        row.uuid=uid
-        row.url="http://www.stackexchange.com"
-        row.landscape=True
-        row.lastseen=datetime.now()
-        row.description=""
-        DBSession.add(row)
-        DBSession.flush()
-    rowdict={}
-    rowdict['uuid']=row.uuid
-    rowdict['url']=row.url
-    rowdict['description']=row.description
-    rowdict['landscape']=row.landscape
-    rowdict['lastseen']=str(row.lastseen)
-    return rowdict
+    uid = request.matchdict['uid']
+    return get_pi_info(uid)
 
 @editMAC.delete(permission='admin')
 def view_json_delete_pi(request):
     uid=request.matchdict['uid']
-    DBSession.query(MyModel).filter(MyModel.uuid==uid).delete()
+    DBSession.query(RasPi).filter(RasPi.uuid==uid).delete()
 
 @editMAC.post(permission='admin')
 def view_json_set_pi(request):
     uid=request.matchdict['uid']
     response=request.json_body
     
-    row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
+    row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
     if row == None:
-        row=MyModel()
+        row=RasPi()
         row.uuid=uid
     row.url=response['url']
     row.description=response['description']

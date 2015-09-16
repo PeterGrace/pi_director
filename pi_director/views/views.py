@@ -10,7 +10,7 @@ import sqlalchemy.exc
 
 from pi_director.models.models import (
     DBSession,
-    MyModel,
+    RasPi,
     )
 
 from pi_director.models.UserModel import UserModel
@@ -21,6 +21,7 @@ from pi_director.security import (
 
 from pi_director.controllers.controllers import (
     get_pis,
+    get_tagged_pis,
     )
 from pi_director.controllers.user_controls import get_users
 
@@ -62,17 +63,25 @@ def view_users(request):
     UserList = get_users()
     return {"loginurl": loginurl,"logged_in":logged_in,"logouturl": request.route_url('logout'),'users':UserList}
 
+@view_config(route_name='tagged', renderer="pi_director:templates/tagged.mak",permission="admin")
+def view_tagged(request):
+    tags = request.matchdict['tags']
+    tagged_pis = get_tagged_pis(tags)
+
+    return {'pis':tagged_pis, 'tags':tags}
+
+
 @view_config(route_name='redirectme')
 def redirect_me(request):
     uid=request.matchdict['uid']
     url="http://www.stackexchange.com"
     try:
-        row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
+        row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
         if row:
             url=row.url
             logging.info("UID {uid}: {page}".format(uid=row.uuid,page=url))
         else:
-            row=MyModel()
+            row=RasPi()
             row.uuid=uid
             row.url="http://www.stackexchange.com"
             row.landscape=True
