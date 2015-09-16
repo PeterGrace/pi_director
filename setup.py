@@ -12,6 +12,7 @@ requires = [
     'pyramid',
     'pyramid_mako',
     'pyramid_tm',
+    'pyramid_debugtoolbar',
     'SQLAlchemy',
     'transaction',
     'zope.sqlalchemy',
