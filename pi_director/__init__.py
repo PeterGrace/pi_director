@@ -50,6 +50,7 @@ def main(global_config, **settings):
     config.include('cornice')
     config.include('pyramid_mako')
     config.add_static_view('static', 'static', cache_max_age=3600)
+    config.add_static_view('client_agent', 'client_agent', cache_max_age=3600)
     config.add_route('home', '/')
     config.add_route('tagged', '/tagged/{tags}')
     config.add_route('users', '/users')
