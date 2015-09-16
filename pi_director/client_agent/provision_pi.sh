@@ -5,6 +5,16 @@ if [ "$EUID" -ne 0 ]; then
   exit
 fi
 
+if [ -z "$1" ]; then
+  echo "Downloading from GitHub."
+  BASEURL="https://raw.githubusercontent.com/PeterGrace/pi_director/master/pi_director"
+  USEPIFM=0
+else
+  echo "Downloading from provided PIFM server."
+  BASEURL="${1}"
+  USEPIFM=1
+fi
+
 ###################################
 # begin borrowing from raspi-config
 raspicfg=$( which raspi-config )
@@ -45,11 +55,11 @@ fi
 
 apt-get -y update
 apt-get -y install unclutter xdotool matchbox-window-manager chromium python-pip imagemagick
-wget https://raw.githubusercontent.com/PeterGrace/pi_director/master/pi_director/client_agent/xsession -O .xsession
-wget https://raw.githubusercontent.com/PeterGrace/pi_director/master/pi_director/client_agent/keydown.sh
-wget https://raw.githubusercontent.com/PeterGrace/pi_director/master/pi_director/client_agent/refresh.sh
-wget https://raw.githubusercontent.com/PeterGrace/pi_director/master/pi_director/client_agent/frozen_screen_detect.sh
-wget https://raw.githubusercontent.com/PeterGrace/pi_director/master/pi_director/client_agent/pifm_agent.py
+wget $BASEURL/client_agent/xsession -O .xsession
+wget $BASEURL/client_agent/keydown.sh
+wget $BASEURL/client_agent/refresh.sh
+wget $BASEURL/client_agent/frozen_screen_detect.sh
+wget $BASEURL/client_agent/pifm_agent.py
 chown pi.pi -R ~pi/.xsession ~pi/pifm_agent.py ~pi/keydown.sh ~pi/refresh.sh ~pi/frozen_screen_detect.sh
 chmod a+x .xsession keydown.sh refresh.sh frozen_screen_detect.sh pifm_agent.py
 
@@ -66,5 +76,10 @@ chown pi:pi -R *
 su pi -c 'echo -e "* * * * *\t/home/pi/pifm_agent.py >/dev/null 2>&1" | crontab'
 echo "display_rotate=0" >> /boot/config.txt
 
-echo "If you're feeling lucky, reboot."
+if [ "$USEPIFM" -eq 1 ]; then
+  echo "If everything worked properly, this should automatically reboot."
+  sed -i "s#http://pi_director#${BASEURL}#" .xsession pifm_client.py
+else
+  echo "Don't forget to update the .xsession and pifm_client.py with the new PIFM."
+fi
 
