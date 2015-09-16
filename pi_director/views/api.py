@@ -8,12 +8,14 @@ from io import BytesIO
 
 from pi_director.models.models import (
     DBSession,
-    MyModel,
+    RasPi,
     Screenshot
     )
 
 from pi_director.controllers.user_controls import make_an_admin
 from pi_director.controllers.controllers import get_pi_info
+
+reqcommands = Service(name='pi_reqcmds', path='/api/v2/reqcmds/{uid}', description="Service to handle arbitary commands to be run on the pi")
 
 screenshot = Service(name='pi_screen', path='/api/v1/screen/{uid}', description="Service to handle insertion and deletion of screenshots")
 
@@ -36,9 +38,9 @@ def view_api_ping_v2(request):
 
     now=datetime.now()
 
-    row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
+    row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
     if row==None:
-        row=MyModel()
+        row=RasPi()
         row.uuid=uid
         row.url="http://www.stackexchange.com"
         row.landscape=True
@@ -55,9 +57,9 @@ def view_api_ping(request):
 
     now=datetime.now()
 
-    row=DBSession.query(MyModel).filter(MyModel.uuid==uid).first()
+    row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
     if row==None:
-        row=MyModel()
+        row=RasPi()
         row.uuid=uid
         row.url="http://www.stackexchange.com"
         row.landscape=True
@@ -92,6 +94,13 @@ def view_api_screenshot_save(request):
     DBSession.add(foo)
     DBSession.flush()
 
+@reqcommands.get(permission='anon')
+def view_api_reqcommands_get(request):
+    pass
+
+@reqcommands.post(permission='anon')
+def view_api_reqcommands_results(request):
+    pass
 
 @authme.get(permission='anon')
 def view_api_create_user(request):

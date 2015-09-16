@@ -23,7 +23,7 @@ DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
 
-class MyModel(Base):
+class RasPi(Base):
     __tablename__ = 'PiUrl'
     uuid = Column(Text, primary_key=True)
     url = Column(Text)
@@ -31,6 +31,7 @@ class MyModel(Base):
     description = Column(Text)
     lastseen = Column(DateTime)
     ip = Column(Text)
+    requested_commands = Column(Text)
     tags = relationship("Tags")
 
 class Tags(Base):

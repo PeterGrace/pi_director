@@ -1,7 +1,7 @@
 from pyramid.response import Response
 from pi_director.models.models import (
     DBSession,
-    MyModel,
+    RasPi,
     )
 from pi_director.models.UserModel import UserModel
 

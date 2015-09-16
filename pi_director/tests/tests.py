@@ -13,12 +13,12 @@ class TestMyViewSuccessCondition(unittest.TestCase):
         engine = create_engine('sqlite://')
         from pi_director.models.models import (
             Base,
-            MyModel,
+            RasPi,
             )
         DBSession.configure(bind=engine)
         Base.metadata.create_all(engine)
         with transaction.manager:
-            model = MyModel(name='one', value=55)
+            model = RasPi(name='one', value=55)
             DBSession.add(model)
 
     def tearDown(self):
@@ -40,7 +40,7 @@ class TestMyViewFailureCondition(unittest.TestCase):
         engine = create_engine('sqlite://')
         from pi_director.models.models import (
             Base,
-            MyModel,
+            RasPi,
             )
         DBSession.configure(bind=engine)
 
