@@ -28,19 +28,19 @@ if [ -z "${UPDATING_ONLY}" ]; then
     eval "$( sed -n '/^disable_raspi_config_at_boot/,/^}/p' $raspicfg )"
     eval "$( sed -n '/^disable_boot_to_scratch/,/^}/p' $raspicfg )"
     
-    echo -n "Checking for ssh keys"
-    while [ 1 ]; do
-        sleep 1
-        keyct=$( ls /etc/ssh/*key* | wc -l )
-        echo $keyct
-        if [ "${keyct}" -gt 1 ]; then
-            echo -n "."
-            continue
-        else
-            break
-        fi
-    done
-    echo "."
+    #echo -n "Checking for ssh keys"
+    #while [ 1 ]; do
+    #    sleep 1
+    #    keyct=$( ls /etc/ssh/*key* | wc -l )
+    #    echo $keyct
+    #    if [ "${keyct}" -gt 1 ]; then
+    #        echo -n "."
+    #       continue
+    #   else
+    #       break
+    #   fi
+    #done
+    #echo "."
     
     # enable ssh
     update-rc.d ssh enable &&
