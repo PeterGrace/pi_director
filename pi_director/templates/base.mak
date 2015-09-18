@@ -50,9 +50,9 @@
 <%block name="BlockContent"/>
 </div> <!-- container -->
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" /></script>
-<script src="${request.static_url('pi_director:static/js/bootstrap.min.js')}" /></script>
-<script src="${request.static_url('pi_director:static/js/bootstrap-modal.js')}" /></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="${request.static_url('pi_director:static/js/bootstrap.min.js')}"></script>
+<script src="${request.static_url('pi_director:static/js/bootstrap-modal.js')}"></script>
 
 <%block name="ScriptContent"/>
 
