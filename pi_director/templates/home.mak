@@ -63,6 +63,7 @@
 						<ul class="dropdown-menu" aria-labelledby="dropdown-${pi.uuid}">
 							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#editModal" href="#editModal" class="macedit">Edit</a>
 							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#deleteModal" href="#deleteModal" class="macdelete">Delete</a>
+							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandModal" href="#commandModal" class="reqcommands">Send Commands</a>
 							<li role="separator" class="divider"</li>
 							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#tagModal" href="#tagModal" class="tagedit">Tag Management</a>
 						</ul>
@@ -156,6 +157,55 @@
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="commandModal" style="margin: 10% 10% 0 10%;">
+	<div class="modal-content">
+		<div class="modal-header">
+			<a href="#" class="close" data-dismiss="modal">x</a>
+			<h3> Send Command(s) </h3>
+		</div>
+		<div class="modal-body">
+			<p>Note that commands will be run as root via sudo next time the pi checks in.</p>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-xs-2">
+						<p>Command</p>
+					</div>
+					<div class="col-xs-7">
+						<p>Arguments</p>
+					</div>
+					<div class="col-xs-3">
+						<p>Arg Actions</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="hidden">
+				<div class="form-group" id="modalCommandTemplate">
+					<div class="col-xs-2">
+						<input type="text" class="form-control" placeholder="command" />
+					</div>
+					<div class="col-xs-7">
+						<input type="text" class="form-control" placeholder="argument" />
+					</div>
+					<div class="col-xs-3">
+						<span class="glyphicon glyphicon-plus"></span>
+						<span class="glyphicon glyphicon-scissors"></span>
+					</div>
+				</div>
+			</div>
+
+			<form class="form-horizontal">
+			</form>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-danger" id="commandModalQueue">Queue Execution</a>
+			<a href="#" class="btn btn-warning" data-dismiss="modal">Cancel</a>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+
 </%block>
 
 <%block name="ScriptContent">
@@ -246,6 +296,40 @@ addLoadEvent(function() {
 	}
 
 	setInterval(reload_tooltip, 30000);
+});
+
+addLoadEvent(function() {
+	$(".reqcommands").click(function(e) {
+		e.preventDefault();
+		var id = $(this).attr("data-id");
+
+		//$.ajax({
+		//	type: "GET",
+		//	url: '/ajax/PiUrl/'+id,
+		//	success: function(formdata) {
+		//		$("#modalMAC").val(formdata.uuid);
+		//		$("#modalDesc").val(formdata.description);
+		//		$("#modalURL").val(formdata.url);
+		//		$("#modalLandscape").prop('checked',formdata.landscape);
+		//		$("#modalMAC").prop('disabled',true);
+		//	}
+		//});
+	});
+});
+
+addLoadEvent(function() {
+	$("#commandModalQueue").click(function(e) {
+		e.preventDefault();
+
+		$.ajax({
+			type: "POST",
+			url: '/ajax/PiUrl/'+id,
+			success: function(formdata) {
+                $("#deleteModal").modal('hide');
+                location.reload(true);
+			}
+		});
+	});
 });
 
 $(function () {
