@@ -76,7 +76,7 @@
 </div> <!-- table-responsive -->
 <button type="button" data-toggle="modal" href="#editModal" class="btn btn-lg btn-success addpi">Add Pi</button>
 
-<div class="modal fade" id="tagModal">
+<div class="modal fade" id="tagModal" style="margin: 0 10% 0 10%;">
 	<div class="modal-content">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">x</a>
@@ -93,10 +93,11 @@
 		<div class="modal-footer">
 			<button type="button" href="#" class="btn btn-lg btn-normal" data-dismiss="modal">Done</a>
 		</div>
+		<div class="clearfix"></div>
 	</div>
 </div>
 
-<div class="modal fade" id="deleteModal">
+<div class="modal fade" id="deleteModal" style="margin: 0 25% 0 25%;">
 	<div class="modal-content">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">x</a>
@@ -109,10 +110,11 @@
 			<a href="#" class="btn btn-danger" id="modalDelete">Delete</a>
 			<a href="#" class="btn btn-warning" data-dismiss="modal">Cancel</a>
 		</div>
+		<div class="clearfix"></div>
 	</div>
 </div>
 
-<div class="modal fade" id="editModal" style="padding-left: 100px; padding-right: 100px;">
+<div class="modal fade" id="editModal" style="margin: 0 10% 0 10%;">
 	<div class="modal-content">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">x</a>
@@ -139,12 +141,14 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="modalLandscape" class="control-label col-xs-2">Landscape Mode</label>
-					<div class="col-xs-10">
-						<input type="checkbox" class="form-control" id="modalLandscape" />
+					<div class="col-xs-offset-2 col-xs-10">
+						<label>
+							<input type="checkbox" id="modalLandscape" /> Landscape Mode
+						</label>
 					</div>
 				</div>
 			</form>
+			<div class="clearfix"></div>
 		</div>
 		<div class="modal-footer">
 			<a href="#" class="btn btn-primary" id="modalSave">Save</a>
