@@ -74,10 +74,16 @@ def view_api_ping(request):
 def view_api_screenshow_show(request):
     uid=request.matchdict['uid']
     shot=DBSession.query(Screenshot).filter(Screenshot.uuid==uid).first()
-    with BytesIO() as ss:
-        ss.write(shot.image)
-        response = Response(content_type='image/png',content_length=len(ss.getvalue()),body=ss.getvalue())
-        return response
+    if shot:
+        with BytesIO() as ss:
+            ss.write(shot.image)
+            return Response(content_type='image/png', content_length=len(ss.getvalue()), body=ss.getvalue())
+    else:
+        with BytesIO() as ss:
+            emptypng = '89504E470D0A1A0A0000000D49484452000000010000000108000000003A7E9B550000000A4944' \
+                       '4154789C63FA0F0001050102CFA02ECD0000000049454E44AE426082'.decode('hex')
+            ss.write(emptypng)
+            return Response(content_type='image/png', content_length=len(ss.getvalue()), body=ss.getvalue())
 
 @screenshot.post(permission='anon')
 def view_api_screenshot_save(request):
