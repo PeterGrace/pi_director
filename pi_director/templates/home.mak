@@ -63,9 +63,9 @@
 						<ul class="dropdown-menu" aria-labelledby="dropdown-${pi.uuid}">
 							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#editModal" href="#editModal" class="macedit">Edit</a>
 							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#deleteModal" href="#deleteModal" class="macdelete">Delete</a>
-							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandModal" href="#commandModal" class="reqcommands">Send Commands</a>
 							<li role="separator" class="divider"</li>
 							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#tagModal" href="#tagModal" class="tagedit">Tag Management</a>
+							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandModal" href="#commandModal" class="sendcommands">Send Commands</a>	
 						</ul>
 					</div>
 				</td>
@@ -165,39 +165,26 @@
 			<h3> Send Command(s) </h3>
 		</div>
 		<div class="modal-body">
-			<p>Note that commands will be run as root via sudo next time the pi checks in.</p>
-			<div class="form-horizontal">
-				<div class="form-group">
-					<div class="col-xs-2">
-						<p>Command</p>
-					</div>
-					<div class="col-xs-7">
-						<p>Arguments</p>
-					</div>
-					<div class="col-xs-3">
-						<p>Arg Actions</p>
-					</div>
-				</div>
-			</div>
+			<p>Note that commands will be run as root via sudo next time the pi checks in.
+			Execution working directory begins in /home/pi, arguments are for a specific command.</p>
 
-			<div class="hidden">
-				<div class="form-group" id="modalCommandTemplate">
-					<div class="col-xs-2">
-						<input type="text" class="form-control" placeholder="command" />
-					</div>
-					<div class="col-xs-7">
-						<input type="text" class="form-control" placeholder="argument" />
-					</div>
-					<div class="col-xs-3">
-						<span class="glyphicon glyphicon-plus"></span>
-						<span class="glyphicon glyphicon-scissors"></span>
-					</div>
-				</div>
-			</div>
-
-			<form class="form-horizontal">
+			<form class="form-horizontal table-responsive" id="commandModalCommands">
 			</form>
+			
+			<table class="hidden table table-striped" id="commandModalTemplate">
+				<thead>
+					<tr>
+						<th class="col-xs-2">Command</th>
+						<th>Arguments</th>
+					</tr>
+				</thead>
+				<tr>
+					<td><input type="text" name="command[]" class="form-control commandModal" placeholder="cmd" /></td>
+					<td><input type="text" name="args[]" class="form-control" placeholder="argument" /></td>
+				</tr>
+			</table>
 		</div>
+
 		<div class="modal-footer">
 			<a href="#" class="btn btn-danger" id="commandModalQueue">Queue Execution</a>
 			<a href="#" class="btn btn-warning" data-dismiss="modal">Cancel</a>
@@ -269,7 +256,7 @@ addLoadEvent(function() {
 	});
 });
 
-addLoadEvent(function() {
+addLoadEvent(function() {	
 	function fixup_cburl(url) {
 		var d = new Date().getTime();
 		
@@ -281,7 +268,7 @@ addLoadEvent(function() {
 			return url + '?_=' + d;
 		}
 	}
-	
+
 	function reload_tooltip() {
 		$('.screenshotMO').each(function(i) {
 			$(this).find('img').each(function(i) {
@@ -295,46 +282,33 @@ addLoadEvent(function() {
 		});
 	}
 
+	$('[data-toggle="tooltip"]').tooltip({ html: true});
 	setInterval(reload_tooltip, 30000);
 });
 
-addLoadEvent(function() {
-	$(".reqcommands").click(function(e) {
-		e.preventDefault();
-		var id = $(this).attr("data-id");
+////////////////////////////////////////
+// SEND COMMAND(S) MODAL
 
-		//$.ajax({
-		//	type: "GET",
-		//	url: '/ajax/PiUrl/'+id,
-		//	success: function(formdata) {
-		//		$("#modalMAC").val(formdata.uuid);
-		//		$("#modalDesc").val(formdata.description);
-		//		$("#modalURL").val(formdata.url);
-		//		$("#modalLandscape").prop('checked',formdata.landscape);
-		//		$("#modalMAC").prop('disabled',true);
-		//	}
-		//});
+$(document).ready(function() {
+	$("#commandModal").one('show.bs.modal', function() {
+		var $tmp = $(this).find('#commandModalTemplate').clone().attr('id', '');
+
+		$(this).find('#commandModalCommands').empty().append($tmp);
 	});
 });
 
 addLoadEvent(function() {
+	$(".sendcommands").click(function(e) {
+		e.preventDefault();
+		var id = $(this).attr("data-id");
+	});
+
 	$("#commandModalQueue").click(function(e) {
 		e.preventDefault();
 
-		$.ajax({
-			type: "POST",
-			url: '/ajax/PiUrl/'+id,
-			success: function(formdata) {
-                $("#deleteModal").modal('hide');
-                location.reload(true);
-			}
-		});
+		console.log($('#commandModalCommands').serialize());
 	});
 });
-
-$(function () {
-	$('[data-toggle="tooltip"]').tooltip({ html: true})
-})
 
 </script>
 </%block>
