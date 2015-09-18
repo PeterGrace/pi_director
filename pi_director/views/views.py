@@ -1,6 +1,7 @@
 from pyramid.response import Response
 from pyramid.view import view_config, forbidden_view_config
 from pyramid.security import authenticated_userid
+from pyramid.renderers import render_to_response
 from velruse import login_url
 import re
 
@@ -47,9 +48,13 @@ def forbidden(request):
         loc = request.route_url('velruse.google-login', _query=(('next', request.path),))
         return exc.HTTPFound(location=loc)
 
+@view_config(route_name='provision', permission='anon')
+def view_provision(request):
+    response = render_to_response('pi_director:templates/provision.mak', {}, request=request)
+    response.content_type = 'text/plain'
+    return response
 
-
-@view_config(route_name='home', renderer="pi_director:templates/home.mak",permission="admin")
+@view_config(route_name='home', renderer="pi_director:templates/home.mak", permission="admin")
 def view_home(request):
     logged_in=authenticated_userid(request)
     loginurl = login_url(request, 'google')

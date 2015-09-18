@@ -1,2 +1,2 @@
-client_agent has been moved to pi_director/client_agent.
+client_agent provisioning is now handled by pi_director/provision
 =============
