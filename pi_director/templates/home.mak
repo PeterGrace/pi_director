@@ -76,7 +76,7 @@
 </div> <!-- table-responsive -->
 <button type="button" data-toggle="modal" href="#editModal" class="btn btn-lg btn-success addpi">Add Pi</button>
 
-<div class="modal fade" id="tagModal" style="margin: 0 10% 0 10%;">
+<div class="modal fade" id="tagModal" style="margin: 10% 10% 0 10%;">
 	<div class="modal-content">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">x</a>
@@ -97,7 +97,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="deleteModal" style="margin: 0 25% 0 25%;">
+<div class="modal fade" id="deleteModal" style="margin: 10% 25% 0 25%;">
 	<div class="modal-content">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">x</a>
@@ -114,7 +114,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="editModal" style="margin: 0 10% 0 10%;">
+<div class="modal fade" id="editModal" style="margin: 10% 10% 0 10%;">
 	<div class="modal-content">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">x</a>
