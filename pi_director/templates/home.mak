@@ -241,7 +241,7 @@ addLoadEvent(function() {
 		});
 	}
 
-	setInterval(reload_tooltip, 15000);
+	setInterval(reload_tooltip, 30000);
 });
 
 $(function () {
