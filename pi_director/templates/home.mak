@@ -307,8 +307,9 @@ function commandModal_cmd_onkeyup(e) {
 function commandModal_arg_onkeyup(e) {
 	if ($(this).val().length > 0) {
 		var myargid = parseInt($(this).attr('data-argid'));
+		var mycmdid = parseInt($(this).attr('data-cmdid'));
 		var $next = $(this).parents('tbody:first')
-							.find('[placeholder=argument][data-argid=' + (myargid + 1) + ']');
+			.find('[placeholder=argument][data-cmdid=' + mycmdid + '][data-argid=' + (myargid + 1) + ']');
 
 		//only make a new one if there isn't a new one already
 		if ($next.length == 0) {
@@ -332,7 +333,7 @@ function commandModal_addArgument(el) {
 			.find('[placeholder=argument]')
 				.attr('data-cmdid', mycmdid)
 				.attr('data-argid', myargid + 1)
-				.attr('name', 'arguments-' + myargid + '[]')
+				.attr('name', 'arguments-' + mycmdid + '[]')
 				.keyup(commandModal_arg_onkeyup)
 				.end()
 	);
@@ -342,7 +343,7 @@ function commandModal_addArgument(el) {
 
 function commandModal_addCommand(el) {
 	var $tbody = $(el).parents('tbody:first');
-	var cnum = $(el).parents('tbody:first').find('tr').length;
+	var cnum = parseInt($(el).attr('data-cmdid')) + 1;
 
 	$tbody.append(
 		$('#commandModalTemplate tbody:first tr:first').clone()
