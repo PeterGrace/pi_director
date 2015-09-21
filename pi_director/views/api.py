@@ -16,6 +16,7 @@ from pi_director.controllers.user_controls import make_an_admin
 from pi_director.controllers.controllers import get_pi_info
 from pi_director.controllers.controllers import get_pi_cmd_info
 
+
 screenshot = Service(name='pi_screen', path='/api/v1/screen/{uid}',
                      description="Service to handle insertion and deletion of screenshots")
 

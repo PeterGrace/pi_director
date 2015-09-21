@@ -20,52 +20,71 @@ from pi_director.controllers.user_controls import (
     delete_user
     )
 
-    
 
+editMAC = Service(name='PiUrl', path='/ajax/PiUrl/{uid}',
+                  description="Get/Set Pi URL Info")
 
-AuthUser = Service(name='AuthUser', path='/ajax/User/{email}', description="Set User authentication")
+editCommands = Service(name='EditPiCommands', path='/ajax/SendCommands/{uid}',
+                       description='Get/Set sendcommands info')
 
-editMAC = Service(name='PiUrl', path='/ajax/PiUrl/{uid}', description="Get/Set Pi URL Info")
+AuthUser = Service(name='AuthUser', path='/ajax/User/{email}',
+                   description="Set User authentication")
+
 
 @editMAC.get(permission='anon')
 def view_json_get_pi(request):
     uid = request.matchdict['uid']
     return get_pi_info(uid)
 
+
 @editMAC.delete(permission='admin')
 def view_json_delete_pi(request):
-    uid=request.matchdict['uid']
-    DBSession.query(RasPi).filter(RasPi.uuid==uid).delete()
+    uid = request.matchdict['uid']
+    DBSession.query(RasPi).filter(RasPi.uuid == uid).delete()
+
 
 @editMAC.post(permission='admin')
 def view_json_set_pi(request):
-    uid=request.matchdict['uid']
-    response=request.json_body
-    
-    row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
-    if row == None:
-        row=RasPi()
-        row.uuid=uid
-    row.url=response['url']
-    row.description=response['description']
-    row.landscape=response['landscape']
+    # TODO: move into controller(s)
+    uid = request.matchdict['uid']
+    response = request.json_body
+
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
+        row = RasPi()
+        row.uuid = uid
+    row.url = response['url']
+    row.description = response['description']
+    row.landscape = response['landscape']
     DBSession.add(row)
     DBSession.flush()
-    rowdict={}
-    rowdict['uuid']=row.uuid
-    rowdict['url']=row.url
-    rowdict['description']=row.description
-    rowdict['landscape']=row.landscape
+    rowdict = {}
+    rowdict['uuid'] = row.uuid
+    rowdict['url'] = row.url
+    rowdict['description'] = row.description
+    rowdict['landscape'] = row.landscape
     return rowdict
+
+
+@editCommands.get(permission='admin')
+def view_ajax_get_commands(request):
+    pass
+
+
+@editCommands.post(permission='admin')
+def view_ajax_set_commands(request):
+    pass
+
 
 @AuthUser.post(permission='admin')
 def view_ajax_set_user_level(request):
-    email=request.matchdict['email']
+    email = request.matchdict['email']
     authorize_user(email)
-    return("{'status':'OK'}")
+    return "{'status':'OK'}"
+
 
 @AuthUser.delete(permission='admin')
 def view_ajax_delete_user(request):
-    email=request.matchdict['email']
+    email = request.matchdict['email']
     delete_user(email)
-    return("{'status':'OK'}")
+    return "{'status':'OK'}"

@@ -28,13 +28,14 @@ def get_tagged_pis(tags):
 
     if (len(taglist) > 1):
         query_str = """
-    SELECT t1.uuid,count(*) AS ct 
-      FROM Tags t1 
+    SELECT t1.uuid,count(*) AS ct
+      FROM Tags t1
       JOIN Tags t2 ON t1.tag!=t2.tag AND t1.uuid==t2.uuid
      WHERE 1
        AND t1.tag IN ({taglist})
        AND t2.tag IN ({taglist})
-  GROUP BY t1.uuid HAVING ct >= {args};
+  GROUP BY t1.uuid
+    HAVING ct >= {args}
         """.format(taglist=taglist_str, args=len(taglist))
 
         result = DBSession.get_bind().execute(query_str)
@@ -45,7 +46,6 @@ def get_tagged_pis(tags):
         PisWithTags = DBSession.query(Tags).filter(Tags.tag.in_(taglist)).all()
         for pi in PisWithTags:
             tagged_pis.append(pi.uuid)
-
 
     PiList = DBSession.query(MyModel).filter(MyModel.uuid.in_(tagged_pis)).order_by(desc(MyModel.lastseen)).all()
     return PiList
@@ -90,4 +90,3 @@ def get_pi_cmd_info(uid):
 
     rowdict = row.get_dict()
     return rowdict
-

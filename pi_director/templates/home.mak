@@ -250,6 +250,7 @@ addLoadEvent(function() {
 		var newLandscape = $("#modalLandscape").prop('checked');
 		$.ajax({
 			type: "POST",
+			cache: false,
 			url: '/ajax/PiUrl/'+modalMAC,
 			data: JSON.stringify({'url':newURL,'landscape':newLandscape,'description':newDesc}),
 			success: function(result) {
@@ -306,8 +307,6 @@ function commandModal_cmd_onkeyup(e) {
 		if ($next.length == 0) {
 			commandModal_addCommand(this);
 		}
-	} else {
-		console.log('---asdf 1---');
 	}
 }
 
@@ -322,8 +321,6 @@ function commandModal_arg_onkeyup(e) {
 		if ($next.length == 0) {
 			commandModal_addArgument(this);
 		}
-	} else {
-		console.log('---asdf 2---');
 	}
 }
 
@@ -344,8 +341,6 @@ function commandModal_addArgument(el) {
 				.keyup(commandModal_arg_onkeyup)
 				.end()
 	);
-	
-	console.log('addarg called');
 }
 
 function commandModal_addCommand(el) {
@@ -388,13 +383,16 @@ function clearCommandModal() {
 }
 
 $(document).ready(function() {
-	$("#commandModal").one('show.bs.modal', function() {
+	$("#commandModal").one('show.bs.modal', function(e) {
 		clearCommandModal();
-	});
+	}).on('show.bs.modal', function(e) {
+		var myid = $(e.relatedTarget).data('id');
 
-	$(".sendcommands").click(function(e) {
-		e.preventDefault();
-		var id = $(this).attr("data-id");
+		if (typeof myid == "undefined") {
+			return;
+		}
+
+		$('#commandModalCommands').attr('data-uid', myid);
 	});
 
 	$("#commandModalClear").click(function(e) {
@@ -405,7 +403,19 @@ $(document).ready(function() {
 	$("#commandModalQueue").click(function(e) {
 		e.preventDefault();
 
-		console.log($('#commandModalCommands').serialize());
+		var cdata = $('#commandModalCommands').serializeArray();
+		for (i in cdata) {
+			
+		}
+		
+		$.ajax({
+			type: "POST",
+			cache: false,
+			url: '/ajax/SendCommands/' + $('#commandModalCommands').data('uid'),
+			data: JSON.stringify(),
+			success: function(result, textStatus, jqXHR) {},
+			error: function(jqXHR, textStatus, errorThrown) {}
+		});
 	});
 });
 
