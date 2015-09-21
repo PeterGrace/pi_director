@@ -337,7 +337,6 @@ function commandModal_addArgument(el) {
 			.find('[placeholder=argument]')
 				.attr('data-cmdid', mycmdid)
 				.attr('data-argid', myargid + 1)
-				.attr('name', 'arguments-' + mycmdid + '[]')
 				.keyup(commandModal_arg_onkeyup)
 				.end()
 	);
@@ -351,13 +350,11 @@ function commandModal_addCommand(el) {
 		$('#commandModalTemplate tbody:first tr:first').clone()
 			.find('[placeholder=cmd]')
 				.attr('data-cmdid', cnum)
-				.attr('name', 'command-' + cnum)
 				.keyup(commandModal_cmd_onkeyup)
 				.end()
 			.find('[placeholder=argument]')
 				.attr('data-cmdid', cnum)
 				.attr('data-argid', 0)
-				.attr('name', 'arguments-' + cnum + '[]')
 				.keyup(commandModal_arg_onkeyup)
 				.end()
 	);
@@ -370,13 +367,11 @@ function clearCommandModal() {
 				.attr('id', '')
 			.find('[placeholder=cmd]')
 				.attr('data-cmdid', 0)
-				.attr('name', 'command-0')
 				.keyup(commandModal_cmd_onkeyup)
 				.end()
 			.find('[placeholder=argument]')
 				.attr('data-cmdid', 0)
 				.attr('data-argid', 0)
-				.attr('name', 'arguments-0[]')
 				.keyup(commandModal_arg_onkeyup)
 				.end()
 	);
@@ -403,16 +398,45 @@ $(document).ready(function() {
 	$("#commandModalQueue").click(function(e) {
 		e.preventDefault();
 
-		var cdata = $('#commandModalCommands').serializeArray();
-		for (i in cdata) {
-			
-		}
-		
+		//serialize our command form
+		var data = {};
+		$('#commandModalCommands input').each(function(idx, el) {
+			var cmdid = $(el).data('cmdid');
+			var argid = $(el).data('argid');
+
+			if ($(el).val() == "") {
+				//skip blanks
+				return;
+			}
+
+			if (typeof(argid) == 'undefined') {
+				//we got a command input
+
+				if (typeof data[cmdid] == 'undefined') {
+					data[cmdid] = {'cmd':$(el).val()}
+				} else {
+					// we got an argument input first (shouldn't happen)
+					if (typeof(data[cmdid]['cmd']) == 'undefined') {
+						data[cmdid]['cmd'] = $(el).val();
+					}
+				}
+			} else{
+				//we got an argument input
+				if (typeof data[cmdid] == 'undefined') {
+					// we got an argument input first (shouldn't happen)
+					data[cmdid] = {}
+					data[cmdid][argid] = $(el).val();
+				} else {
+					data[cmdid][argid] = $(el).val();
+				}
+			}
+		});
+
 		$.ajax({
 			type: "POST",
 			cache: false,
 			url: '/ajax/SendCommands/' + $('#commandModalCommands').data('uid'),
-			data: JSON.stringify(),
+			data: JSON.stringify(data),
 			success: function(result, textStatus, jqXHR) {},
 			error: function(jqXHR, textStatus, errorThrown) {}
 		});

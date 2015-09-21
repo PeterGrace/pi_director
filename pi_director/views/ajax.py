@@ -58,11 +58,12 @@ def view_json_set_pi(request):
     row.landscape = response['landscape']
     DBSession.add(row)
     DBSession.flush()
-    rowdict = {}
-    rowdict['uuid'] = row.uuid
-    rowdict['url'] = row.url
-    rowdict['description'] = row.description
-    rowdict['landscape'] = row.landscape
+    rowdict = {
+        'uuid': row.uuid,
+        'url': row.url,
+        'description': row.description,
+        'landscape': row.landscape
+    }
     return rowdict
 
 
@@ -73,7 +74,7 @@ def view_ajax_get_commands(request):
 
 @editCommands.post(permission='admin')
 def view_ajax_set_commands(request):
-    pass
+    return str(request.json_body)
 
 
 @AuthUser.post(permission='admin')
