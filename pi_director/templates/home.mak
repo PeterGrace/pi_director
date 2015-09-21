@@ -166,7 +166,7 @@
 		</div>
 		<div class="modal-body">
 			<p>Note that commands will be run as root via sudo next time the pi checks in.
-			Execution working directory begins in /home/pi, arguments are for a specific command.</p>
+			Execution working directory begins in /home/pi, arguments are for each specific command.</p>
 
 			<form class="form-horizontal table-responsive" id="commandModalCommands">
 			</form>
@@ -179,8 +179,8 @@
 					</tr>
 				</thead>
 				<tr>
-					<td><input type="text" name="command[]" class="form-control commandModal" placeholder="cmd" /></td>
-					<td><input type="text" name="args[]" class="form-control" placeholder="argument" /></td>
+					<td><input type="text" class="form-control" placeholder="cmd" /></td>
+					<td><input type="text" class="form-control" placeholder="argument" /></td>
 				</tr>
 			</table>
 		</div>
@@ -289,15 +289,101 @@ addLoadEvent(function() {
 ////////////////////////////////////////
 // SEND COMMAND(S) MODAL
 
+function commandModal_cmd_onkeyup(e) {
+	if ($(this).val().length > 0) {
+		var mycmdid = parseInt($(this).attr('data-cmdid'));
+		var $next = $(this).parents('tbody:first')
+							.find('[placeholder=cmd][data-cmdid=' + (mycmdid + 1) + ']');
+
+		//only make a new one if there isn't a new one already
+		if ($next.length == 0) {
+			commandModal_addCommand(this);
+		}
+	} else {
+		console.log('---asdf 1---');
+	}
+}
+
+function commandModal_arg_onkeyup(e) {
+	if ($(this).val().length > 0) {
+		var myargid = parseInt($(this).attr('data-argid'));
+		var $next = $(this).parents('tbody:first')
+							.find('[placeholder=argument][data-argid=' + (myargid + 1) + ']');
+
+		//only make a new one if there isn't a new one already
+		if ($next.length == 0) {
+			commandModal_addArgument(this);
+		}
+	} else {
+		console.log('---asdf 2---');
+	}
+}
+
+function commandModal_addArgument(el) {
+	var $tr = $(el).parents('tr:first');
+	var mycmdid = parseInt($(el).attr('data-cmdid'));
+	var myargid = parseInt($(el).attr('data-argid'));
+
+	$tr.after(
+		$('#commandModalTemplate tbody:first tr:first').clone()
+			.find('[placeholder=cmd]')
+				.replaceWith('<br/>')
+				.end()
+			.find('[placeholder=argument]')
+				.attr('data-cmdid', mycmdid)
+				.attr('data-argid', myargid + 1)
+				.attr('name', 'arguments-' + myargid + '[]')
+				.keyup(commandModal_arg_onkeyup)
+				.end()
+	);
+	
+	console.log('addarg called');
+}
+
+function commandModal_addCommand(el) {
+	var $tbody = $(el).parents('tbody:first');
+	var cnum = $(el).parents('tbody:first').find('tr').length;
+
+	$tbody.append(
+		$('#commandModalTemplate tbody:first tr:first').clone()
+			.find('[placeholder=cmd]')
+				.attr('data-cmdid', cnum)
+				.attr('name', 'command-' + cnum)
+				.keyup(commandModal_cmd_onkeyup)
+				.end()
+			.find('[placeholder=argument]')
+				.attr('data-cmdid', cnum)
+				.attr('data-argid', 0)
+				.attr('name', 'arguments-' + cnum + '[]')
+				.keyup(commandModal_arg_onkeyup)
+				.end()
+	);
+}
+
+function clearCommandModal() {
+	$('#commandModalCommands').empty().append(
+		$('#commandModalTemplate').clone()
+				.removeClass('hidden')
+				.attr('id', '')
+			.find('[placeholder=cmd]')
+				.attr('data-cmdid', 0)
+				.attr('name', 'command-0')
+				.keyup(commandModal_cmd_onkeyup)
+				.end()
+			.find('[placeholder=argument]')
+				.attr('data-cmdid', 0)
+				.attr('data-argid', 0)
+				.attr('name', 'arguments-0[]')
+				.keyup(commandModal_arg_onkeyup)
+				.end()
+	);
+}
+
 $(document).ready(function() {
 	$("#commandModal").one('show.bs.modal', function() {
-		var $tmp = $(this).find('#commandModalTemplate').clone().attr('id', '');
-
-		$(this).find('#commandModalCommands').empty().append($tmp);
+		clearCommandModal();
 	});
-});
 
-addLoadEvent(function() {
 	$(".sendcommands").click(function(e) {
 		e.preventDefault();
 		var id = $(this).attr("data-id");
@@ -309,6 +395,7 @@ addLoadEvent(function() {
 		console.log($('#commandModalCommands').serialize());
 	});
 });
+
 
 </script>
 </%block>
