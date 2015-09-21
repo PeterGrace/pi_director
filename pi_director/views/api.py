@@ -14,6 +14,7 @@ from pi_director.models.models import (
 
 from pi_director.controllers.user_controls import make_an_admin
 from pi_director.controllers.controllers import get_pi_info
+from pi_director.controllers.controllers import get_pi_cmd_info
 
 screenshot = Service(name='pi_screen', path='/api/v1/screen/{uid}',
                      description="Service to handle insertion and deletion of screenshots")
@@ -71,8 +72,8 @@ def view_api_ping(request):
 
     now = datetime.now()
 
-    row = DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
-    if row == None:
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
         row = RasPi()
         row.uuid = uid
         row.url = "http://www.stackexchange.com"
@@ -91,8 +92,8 @@ def view_api_ping_v2(request):
 
     now = datetime.now()
 
-    row = DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
-    if row == None:
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
         row = RasPi()
         row.uuid = uid
         row.url = "http://www.stackexchange.com"
@@ -123,5 +124,6 @@ def view_api_reqcommands_results(request):
 
 @reqcommands.get(permission='anon')
 def view_api_reqcommands_get(request):
-    pass
-
+    cmdinfo = get_pi_cmd_info(request.matchdict['uid'])
+    
+    return get_pi_cmd_info(uid)
