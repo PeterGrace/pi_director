@@ -186,6 +186,7 @@
 		</div>
 
 		<div class="modal-footer">
+			<a href="#" class="btn btn-info pull-left" id="commandModalClear">Reset Form</a>
 			<a href="#" class="btn btn-danger" id="commandModalQueue">Queue Execution</a>
 			<a href="#" class="btn btn-warning" data-dismiss="modal">Cancel</a>
 		</div>
@@ -196,7 +197,10 @@
 </%block>
 
 <%block name="ScriptContent">
-<script>
+<script type="text/javascript">
+
+////////////////////////////////////////
+// EDIT PI MODAL
 addLoadEvent(function() {
 	$(".macdelete").click(function(e) {
 		e.preventDefault();
@@ -256,7 +260,10 @@ addLoadEvent(function() {
 	});
 });
 
-addLoadEvent(function() {	
+
+////////////////////////////////////////
+// TOOLTIP RELOADING
+$(document).ready(function() {
 	function fixup_cburl(url) {
 		var d = new Date().getTime();
 		
@@ -286,9 +293,9 @@ addLoadEvent(function() {
 	setInterval(reload_tooltip, 30000);
 });
 
+
 ////////////////////////////////////////
 // SEND COMMAND(S) MODAL
-
 function commandModal_cmd_onkeyup(e) {
 	if ($(this).val().length > 0) {
 		var mycmdid = parseInt($(this).attr('data-cmdid'));
@@ -388,6 +395,11 @@ $(document).ready(function() {
 	$(".sendcommands").click(function(e) {
 		e.preventDefault();
 		var id = $(this).attr("data-id");
+	});
+
+	$("#commandModalClear").click(function(e) {
+		e.preventDefault();
+		clearCommandModal();
 	});
 
 	$("#commandModalQueue").click(function(e) {
