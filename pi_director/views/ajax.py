@@ -5,6 +5,7 @@ import pyramid.httpexceptions as exc
 import logging
 import sqlalchemy.exc
 import pdb
+import operator
 from datetime import datetime
 
 from pi_director.models.models import (
@@ -29,6 +30,8 @@ editCommands = Service(name='EditPiCommands', path='/ajax/SendCommands/{uid}',
 
 AuthUser = Service(name='AuthUser', path='/ajax/User/{email}',
                    description="Set User authentication")
+
+logger = logging.getLogger('ajax');
 
 
 @editMAC.get(permission='anon')
@@ -74,18 +77,50 @@ def view_ajax_get_commands(request):
 
 @editCommands.post(permission='admin')
 def view_ajax_set_commands(request):
-    return str(request.json_body)
+    uid = request.matchdict['uid']
+    response = request.json_body
+
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
+        return '{"status":"error"}'
+
+    # convert response into something with stable sorting
+    cmds = []
+    tmpcmds = sorted(response.items(), key=operator.itemgetter(0))
+    for tmptuple in tmpcmds:
+        # extract cmdid/cmd
+        cmdid = int(tmptuple[0])
+        cmd = tmptuple[1]['cmd']
+        del tmptuple[1]['cmd']
+
+        # extract arguments
+        tmpargs = sorted(tmptuple[1].items(), key=operator.itemgetter(0))
+        args = [item[1] for item in tmpargs]
+
+        # put into our cmd object in the correct order
+        cmds.insert(cmdid, {})
+        cmds[cmdid]['cmd'] = cmd
+        cmds[cmdid]['args'] = args
+
+        #command hasn't been run yet, so this is blank
+        cmds[cmdid]['result'] = ''
+
+    row.requested_commands = str(cmds)
+    DBSession.flush()
+
+    return str(cmds)
 
 
 @AuthUser.post(permission='admin')
 def view_ajax_set_user_level(request):
     email = request.matchdict['email']
     authorize_user(email)
-    return "{'status':'OK'}"
+    return '{"status":"OK"}'
 
 
 @AuthUser.delete(permission='admin')
 def view_ajax_delete_user(request):
     email = request.matchdict['email']
     delete_user(email)
-    return "{'status':'OK'}"
+    return '{"status":"OK"}'
+
