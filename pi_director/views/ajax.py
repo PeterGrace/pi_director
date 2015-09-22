@@ -121,7 +121,16 @@ def view_ajax_get_command_results(request):
 
 @editCommandResults.post(permission='admin')
 def view_ajax_set_command_results(request):
-    pass
+    uid = request.matchdict['uid']
+
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
+        return '{"status":"error"}'
+
+    row.requested_commands = ''
+    DBSession.flush()
+
+    return str('{"status":"OK"}')
 
 
 @AuthUser.post(permission='admin')

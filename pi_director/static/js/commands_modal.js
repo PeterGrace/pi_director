@@ -79,24 +79,24 @@ function clearCommandModal() {
 }
 
 $(document).ready(function() {
-	$("#commandModal").one('show.bs.modal', function(e) {
+	$('#commandModal').one('show.bs.modal', function(e) {
 		clearCommandModal();
 	}).on('show.bs.modal', function(e) {
 		var myid = $(e.relatedTarget).data('id');
 
-		if (typeof myid == "undefined") {
+		if (typeof(myid) == 'undefined') {
 			return;
 		}
 
 		$('#commandModalCommands').attr('data-uid', myid);
 	});
 
-	$("#commandModalClear").click(function(e) {
+	$('#commandModalClear').click(function(e) {
 		e.preventDefault();
 		clearCommandModal();
 	});
 
-	$("#commandModalQueue").click(function(e) {
+	$('#commandModalQueue').click(function(e) {
 		e.preventDefault();
 
 		//serialize our command form
@@ -105,7 +105,7 @@ $(document).ready(function() {
 			var cmdid = $(el).data('cmdid');
 			var argid = $(el).data('argid');
 
-			if ($(el).val() == "") {
+			if ($(el).val() == '') {
 				//skip blanks
 				return;
 			}
@@ -114,7 +114,7 @@ $(document).ready(function() {
 				//we got a command input
 
 				if (typeof(data[cmdid]) == 'undefined') {
-					data[cmdid] = {'cmd':$(el).val()}
+					data[cmdid] = {'cmd': $(el).val()}
 				} else {
 					// we got an argument input first (shouldn't happen)
 					if (typeof(data[cmdid]['cmd']) == 'undefined') {
@@ -134,12 +134,16 @@ $(document).ready(function() {
 		});
 
 		$.ajax({
-			type: "POST",
+			type: 'POST',
 			cache: false,
 			url: '/ajax/SendCommands/' + $('#commandModalCommands').data('uid'),
 			data: JSON.stringify(data),
-			success: function(result, textStatus, jqXHR) {location.reload(true);},
-			error: function(jqXHR, textStatus, errorThrown) {}
+			success: function(result, textStatus, jqXHR) {
+                location.reload(true);
+            },
+			error: function(jqXHR, textStatus, errorThrown) {
+                //TODO: handle errors
+            }
 		});
 	});
 });

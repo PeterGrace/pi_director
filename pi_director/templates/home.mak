@@ -176,7 +176,7 @@
 				<thead>
 					<tr>
 						<th class="col-xs-2">Command</th>
-						<th>Results</th>
+						<th>Result</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -185,7 +185,7 @@
 		</div>
 
 		<div class="modal-footer">
-			<a href="#" class="btn btn-danger pull-left" id="commandResultsDelete">Delete Results/Pending Commands</a>
+			<a href="#" class="btn btn-danger pull-left" id="commandResultDelete">Delete Results/Pending Commands</a>
 			<a href="#" class="btn btn-info" data-dismiss="modal">Close</a>
 		</div>
 		<div class="clearfix"></div>
