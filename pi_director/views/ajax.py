@@ -74,11 +74,6 @@ def view_json_set_pi(request):
     return rowdict
 
 
-@editCommands.get(permission='admin')
-def view_ajax_get_commands(request):
-    pass
-
-
 @editCommands.post(permission='admin')
 def view_ajax_set_commands(request):
     uid = request.matchdict['uid']
