@@ -420,7 +420,7 @@ $(document).ready(function() {
 						data[cmdid]['cmd'] = $(el).val();
 					}
 				}
-			} else{
+			} else {
 				//we got an argument input
 				if (typeof data[cmdid] == 'undefined') {
 					// we got an argument input first (shouldn't happen)
