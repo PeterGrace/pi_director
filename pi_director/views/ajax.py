@@ -6,6 +6,7 @@ import logging
 import sqlalchemy.exc
 import pdb
 import operator
+import json
 from datetime import datetime
 
 from pi_director.models.models import (
@@ -105,10 +106,10 @@ def view_ajax_set_commands(request):
         cmds[cmdid]['cmd'] = cmd
         cmds[cmdid]['args'] = args
 
-        #command hasn't been run yet, so this is blank
+        # command hasn't been run yet, so this is blank
         cmds[cmdid]['result'] = ''
 
-    row.requested_commands = str(cmds)
+    row.requested_commands = json.dumps(cmds)
     DBSession.flush()
 
     return str(cmds)
@@ -116,7 +117,16 @@ def view_ajax_set_commands(request):
 
 @editCommandResults.get(permission='admin')
 def view_ajax_get_command_results(request):
-    pass
+    uid = request.matchdict['uid']
+
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
+        return {'status': 'error'}
+
+    logger.info(row.requested_commands)
+    data = json.loads(row.requested_commands)
+
+    return {'status': 'OK', 'data': data}
 
 
 @editCommandResults.post(permission='admin')
@@ -125,12 +135,12 @@ def view_ajax_set_command_results(request):
 
     row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
     if row is None:
-        return '{"status":"error"}'
+        return {'status': 'error'}
 
     row.requested_commands = ''
     DBSession.flush()
 
-    return str('{"status":"OK"}')
+    return {'status': 'OK'}
 
 
 @AuthUser.post(permission='admin')

@@ -172,7 +172,7 @@
 			<p>If the pi has executed commands, their results (if any) will turn up here.
 			Deleting results/pending commands after the pi has checked in but before it has
 			returned results could be problematic and is not recommended (but supported).</p>
-			<table class="hidden table table-striped" id="commandResults">
+			<table class="table table-striped" id="commandResults">
 				<thead>
 					<tr>
 						<th class="col-xs-2">Command</th>

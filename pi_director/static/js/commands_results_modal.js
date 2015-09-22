@@ -21,9 +21,34 @@ $(document).ready(function() {
 		if (typeof(myid) == 'undefined') {
 			return;
 		}
-		
+
 		$('#commandResultModal').attr('data-uid', myid);
+		var $resultTBody = $('#commandResults tbody:first').empty();
+
+		$.ajax({
+			type: 'GET',
+			cache: false,
+			url: '/ajax/CommandResults/' + myid,
+			data: {},
+			success: function(result, textStatus, jqXHR) {
+				if (result.status == 'OK') {
+					for (cmdid in result.data) {
+						var cmd = result.data[cmdid];
+						cmdtext = '<pre>' + escapeHtml(cmd.cmd + ' ' + cmd.args.join(' ')) + '</pre>';
+						restext = '<pre>' + (cmd.result ? escapeHtml(cmd.result) : '&nbsp') + '</pre>';
+						$resultTBody.append(
+							'<tr><td>' + cmdtext + '</td><td>' + restext + '</td></tr>'
+						);
+					}
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				//TODO: handle errors
+			}
+		});
 	});
+
+	
 
 });
 
