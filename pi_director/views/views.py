@@ -26,27 +26,29 @@ from pi_director.controllers.controllers import (
     )
 from pi_director.controllers.user_controls import get_users
 
+
 @forbidden_view_config(renderer="pi_director:templates/forbidden.mak")
 def forbidden(request):
     logging.info("Going into forbidden")
-    m=re.match("^/?(ajax|api).*$",request.path)
-    if m != None:
+    m = re.match("^/?(ajax|api).*$", request.path)
+    if m is not None:
         '''we're trying to hit an api or ajax query without authentication'''
         logging.warn("Someone tried to hit an ajax/api without authentication.  Route: {route}".format(route=request.path))
         return Response("{'status':'Forbidden'}")
 
-    userid=authenticated_userid(request)
+    userid = authenticated_userid(request)
     if userid:
-       logging.info("User exists but some other problem occured, FORBIDDEN.")
-       group=groupfinder(userid,request)
-       logging.info("User {user} access level {access}".format(user=userid,access=group))
-       return ("")
+        logging.info("User exists but some other problem occured, FORBIDDEN.")
+        group = groupfinder(userid, request)
+        logging.info("User {user} access level {access}".format(user=userid, access=group))
+        return ("")
 
-    if groupfinder(None,request) is None:
-        request.session['goingto']=request.path
+    if groupfinder(None, request) is None:
+        request.session['goingto'] = request.path
         logging.info("Should be shunting to login page")
         loc = request.route_url('velruse.google-login', _query=(('next', request.path),))
         return exc.HTTPFound(location=loc)
+
 
 @view_config(route_name='provision', permission='anon')
 def view_provision(request):
@@ -54,46 +56,49 @@ def view_provision(request):
     response.content_type = 'text/plain'
     return response
 
+
 @view_config(route_name='home', renderer="pi_director:templates/home.mak", permission="admin")
 def view_home(request):
-    logged_in=authenticated_userid(request)
+    logged_in = authenticated_userid(request)
     loginurl = login_url(request, 'google')
-    PiList=get_pis()
-    return {"loginurl": loginurl,"logged_in":logged_in,"logouturl": request.route_url('logout'),'pis':PiList}
+    PiList = get_pis()
+    return {"loginurl": loginurl, "logged_in": logged_in, "logouturl": request.route_url('logout'), 'pis': PiList}
 
-@view_config(route_name='users', renderer="pi_director:templates/user.mak",permission="admin")
+
+@view_config(route_name='users', renderer="pi_director:templates/user.mak", permission="admin")
 def view_users(request):
-    logged_in=authenticated_userid(request)
+    logged_in = authenticated_userid(request)
     loginurl = login_url(request, 'google')
     UserList = get_users()
-    return {"loginurl": loginurl,"logged_in":logged_in,"logouturl": request.route_url('logout'),'users':UserList}
+    return {"loginurl": loginurl, "logged_in": logged_in, "logouturl": request.route_url('logout'), 'users': UserList}
 
-@view_config(route_name='tagged', renderer="pi_director:templates/tagged.mak",permission="admin")
+
+@view_config(route_name='tagged', renderer="pi_director:templates/tagged.mak", permission="admin")
 def view_tagged(request):
     tags = request.matchdict['tags']
     tagged_pis = get_tagged_pis(tags)
 
-    return {'pis':tagged_pis, 'tags':tags}
+    return {'pis': tagged_pis, 'tags':tags}
 
 
 @view_config(route_name='redirectme')
 def redirect_me(request):
-    uid=request.matchdict['uid']
-    url="http://www.stackexchange.com"
+    uid = request.matchdict['uid']
+    url = "http://www.stackexchange.com"
     try:
-        row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
+        row = DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
         if row:
-            url=row.url
-            logging.info("UID {uid}: {page}".format(uid=row.uuid,page=url))
+            url = row.url
+            logging.info("UID {uid}: {page}".format(uid=row.uuid, page=url))
         else:
-            row=RasPi()
-            row.uuid=uid
-            row.url="http://www.stackexchange.com"
-            row.landscape=True
+            row = RasPi()
+            row.uuid = uid
+            row.url = "http://www.stackexchange.com"
+            row.landscape = True
             DBSession.add(row)
             DBSession.flush()
             logging.warn("UID {uid} NOT FOUND. ADDED TO TABLE WITH DEFAULT URL".format(uid=uid))
-            url=row.url
+            url = row.url
     except Exception:
             logging.error("Something went south with DB when searching for {uid}".format(uid=uid))
 

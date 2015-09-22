@@ -28,6 +28,9 @@ editMAC = Service(name='PiUrl', path='/ajax/PiUrl/{uid}',
 editCommands = Service(name='EditPiCommands', path='/ajax/SendCommands/{uid}',
                        description='Get/Set sendcommands info')
 
+editCommandResults = Service(name='EditPiCommandResults', path='/ajax/CommandResults/{uid}',
+                             description='Get/Set sendcommands info')
+
 AuthUser = Service(name='AuthUser', path='/ajax/User/{email}',
                    description="Set User authentication")
 
@@ -109,6 +112,16 @@ def view_ajax_set_commands(request):
     DBSession.flush()
 
     return str(cmds)
+
+
+@editCommandResults.get(permission='admin')
+def view_ajax_get_command_results(request):
+    pass
+
+
+@editCommandResults.post(permission='admin')
+def view_ajax_set_command_results(request):
+    pass
 
 
 @AuthUser.post(permission='admin')

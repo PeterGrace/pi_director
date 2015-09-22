@@ -65,7 +65,11 @@
 							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#deleteModal" href="#deleteModal" class="macdelete">Delete</a>
 							<li role="separator" class="divider"</li>
 							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#tagModal" href="#tagModal" class="tagedit">Tag Management</a>
-							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandModal" href="#commandModal" class="sendcommands">Send Commands</a>	
+		%if pi.requested_commands:
+							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandResultModal" href="#commandResultModal" class="commandsresults">Command Results</a>
+		%else:
+							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandModal" href="#commandModal" class="sendcommands">Send Commands</a>
+		%endif
 						</ul>
 					</div>
 				</td>
@@ -158,6 +162,36 @@
 	</div>
 </div>
 
+<div class="modal fade" id="commandResultModal" style="margin: 10% 10% 0 10%;">
+	<div class="modal-content">
+		<div class="modal-header">
+			<a href="#" class="close" data-dismiss="modal">x</a>
+			<h3> Command(s) Results </h3>
+		</div>
+		<div class="modal-body">
+			<p>If the pi has executed commands, their results (if any) will turn up here.
+			Deleting results/pending commands after the pi has checked in but before it has
+			returned results could be problematic and is not recommended (but supported).</p>
+			<table class="hidden table table-striped" id="commandResults">
+				<thead>
+					<tr>
+						<th class="col-xs-2">Command</th>
+						<th>Results</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="modal-footer">
+			<a href="#" class="btn btn-danger pull-left" id="commandResultsDelete">Delete Results/Pending Commands</a>
+			<a href="#" class="btn btn-info" data-dismiss="modal">Close</a>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+
 <div class="modal fade" id="commandModal" style="margin: 10% 10% 0 10%;">
 	<div class="modal-content">
 		<div class="modal-header">
@@ -178,10 +212,12 @@
 						<th>Arguments</th>
 					</tr>
 				</thead>
-				<tr>
-					<td><input type="text" class="form-control" placeholder="cmd" /></td>
-					<td><input type="text" class="form-control" placeholder="argument" /></td>
-				</tr>
+				<tbody>
+					<tr>
+						<td><input type="text" class="form-control" placeholder="cmd" /></td>
+						<td><input type="text" class="form-control" placeholder="argument" /></td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 
@@ -294,155 +330,12 @@ $(document).ready(function() {
 	setInterval(reload_tooltip, 30000);
 });
 
-
-////////////////////////////////////////
-// SEND COMMAND(S) MODAL
-function commandModal_cmd_onkeyup(e) {
-	if ($(this).val().length > 0) {
-		var mycmdid = parseInt($(this).attr('data-cmdid'));
-		var $next = $(this).parents('tbody:first')
-							.find('[placeholder=cmd][data-cmdid=' + (mycmdid + 1) + ']');
-
-		//only make a new one if there isn't a new one already
-		if ($next.length == 0) {
-			commandModal_addCommand(this);
-		}
-	}
-}
-
-function commandModal_arg_onkeyup(e) {
-	if ($(this).val().length > 0) {
-		var myargid = parseInt($(this).attr('data-argid'));
-		var mycmdid = parseInt($(this).attr('data-cmdid'));
-		var $next = $(this).parents('tbody:first')
-			.find('[placeholder=argument][data-cmdid=' + mycmdid + '][data-argid=' + (myargid + 1) + ']');
-
-		//only make a new one if there isn't a new one already
-		if ($next.length == 0) {
-			commandModal_addArgument(this);
-		}
-	}
-}
-
-function commandModal_addArgument(el) {
-	var $tr = $(el).parents('tr:first');
-	var mycmdid = parseInt($(el).attr('data-cmdid'));
-	var myargid = parseInt($(el).attr('data-argid'));
-
-	$tr.after(
-		$('#commandModalTemplate tbody:first tr:first').clone()
-			.find('[placeholder=cmd]')
-				.replaceWith('<br/>')
-				.end()
-			.find('[placeholder=argument]')
-				.attr('data-cmdid', mycmdid)
-				.attr('data-argid', myargid + 1)
-				.keyup(commandModal_arg_onkeyup)
-				.end()
-	);
-}
-
-function commandModal_addCommand(el) {
-	var $tbody = $(el).parents('tbody:first');
-	var cnum = parseInt($(el).attr('data-cmdid')) + 1;
-
-	$tbody.append(
-		$('#commandModalTemplate tbody:first tr:first').clone()
-			.find('[placeholder=cmd]')
-				.attr('data-cmdid', cnum)
-				.keyup(commandModal_cmd_onkeyup)
-				.end()
-			.find('[placeholder=argument]')
-				.attr('data-cmdid', cnum)
-				.attr('data-argid', 0)
-				.keyup(commandModal_arg_onkeyup)
-				.end()
-	);
-}
-
-function clearCommandModal() {
-	$('#commandModalCommands').empty().append(
-		$('#commandModalTemplate').clone()
-				.removeClass('hidden')
-				.attr('id', '')
-			.find('[placeholder=cmd]')
-				.attr('data-cmdid', 0)
-				.keyup(commandModal_cmd_onkeyup)
-				.end()
-			.find('[placeholder=argument]')
-				.attr('data-cmdid', 0)
-				.attr('data-argid', 0)
-				.keyup(commandModal_arg_onkeyup)
-				.end()
-	);
-}
-
-$(document).ready(function() {
-	$("#commandModal").one('show.bs.modal', function(e) {
-		clearCommandModal();
-	}).on('show.bs.modal', function(e) {
-		var myid = $(e.relatedTarget).data('id');
-
-		if (typeof myid == "undefined") {
-			return;
-		}
-
-		$('#commandModalCommands').attr('data-uid', myid);
-	});
-
-	$("#commandModalClear").click(function(e) {
-		e.preventDefault();
-		clearCommandModal();
-	});
-
-	$("#commandModalQueue").click(function(e) {
-		e.preventDefault();
-
-		//serialize our command form
-		var data = {};
-		$('#commandModalCommands input').each(function(idx, el) {
-			var cmdid = $(el).data('cmdid');
-			var argid = $(el).data('argid');
-
-			if ($(el).val() == "") {
-				//skip blanks
-				return;
-			}
-
-			if (typeof(argid) == 'undefined') {
-				//we got a command input
-
-				if (typeof data[cmdid] == 'undefined') {
-					data[cmdid] = {'cmd':$(el).val()}
-				} else {
-					// we got an argument input first (shouldn't happen)
-					if (typeof(data[cmdid]['cmd']) == 'undefined') {
-						data[cmdid]['cmd'] = $(el).val();
-					}
-				}
-			} else {
-				//we got an argument input
-				if (typeof data[cmdid] == 'undefined') {
-					// we got an argument input first (shouldn't happen)
-					data[cmdid] = {}
-					data[cmdid][argid] = $(el).val();
-				} else {
-					data[cmdid][argid] = $(el).val();
-				}
-			}
-		});
-
-		$.ajax({
-			type: "POST",
-			cache: false,
-			url: '/ajax/SendCommands/' + $('#commandModalCommands').data('uid'),
-			data: JSON.stringify(data),
-			success: function(result, textStatus, jqXHR) {},
-			error: function(jqXHR, textStatus, errorThrown) {}
-		});
-	});
-});
-
-
 </script>
+
+<!-- SEND COMMAND(S) MODAL -->
+<script type="text/javascript" src="${request.static_url('pi_director:static/js/commands_modal.js')}"></script>
+
+<!-- COMMANDS(S) RESULTS MODAL -->
+<script type="text/javascript" src="${request.static_url('pi_director:static/js/commands_results_modal.js')}"></script>
+
 </%block>

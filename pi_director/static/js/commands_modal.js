@@ -113,7 +113,7 @@ $(document).ready(function() {
 			if (typeof(argid) == 'undefined') {
 				//we got a command input
 
-				if (typeof data[cmdid] == 'undefined') {
+				if (typeof(data[cmdid]) == 'undefined') {
 					data[cmdid] = {'cmd':$(el).val()}
 				} else {
 					// we got an argument input first (shouldn't happen)
@@ -123,7 +123,7 @@ $(document).ready(function() {
 				}
 			} else {
 				//we got an argument input
-				if (typeof data[cmdid] == 'undefined') {
+				if (typeof(data[cmdid]) == 'undefined') {
 					// we got an argument input first (shouldn't happen)
 					data[cmdid] = {}
 					data[cmdid][argid] = $(el).val();
@@ -138,7 +138,7 @@ $(document).ready(function() {
 			cache: false,
 			url: '/ajax/SendCommands/' + $('#commandModalCommands').data('uid'),
 			data: JSON.stringify(data),
-			success: function(result, textStatus, jqXHR) {},
+			success: function(result, textStatus, jqXHR) {location.reload(true);},
 			error: function(jqXHR, textStatus, errorThrown) {}
 		});
 	});
