@@ -10,7 +10,7 @@ import atexit
 from sh import sudo
 
 CACHE_FILE = "/home/pi/cache.pickle"
-PIFM_HOST = "http://pi_director"
+PIFM_HOST = "http://den-storno-itlin.ds.stackexchange.com:6543"
 LOCK_DIR = "/dev/shm/pifm.lock"
 
 logging.basicConfig(level=logging.INFO)
@@ -25,7 +25,7 @@ def acquire_lock():
         # we are using a directory because that is an atomic operation
         os.mkdir(LOCK_DIR)
     except OSError:
-        logging.info('PIFM Agent is already running according to LOCK_DIR')
+        logging.info('PIFM Agent is already running according to: '+LOCK_DIR)
         sys.exit(0)
 
     atexit.register(release_lock)
@@ -99,26 +99,36 @@ try:
     else:
         should_reboot = False
 
-    # pifm server will have unset
+    # pifm server will unset the command(s) after results are sent
     if piurl['requested_commands']:
-        logging.info("Found arbitrary commands to run.")
-        try:
-            commands = json.loads(piurl['requested_commands'])
-        except:
-            logging.info("Didn't get acceptable json for requested commands.")
-            # TODO: tell server they failed
-        output = []
-        cmdreboot = command['rebootafter']
-        del command['rebootafter']
+        def _reqcmd_resp(data=None, err=None):
+            if err:
+                return requests.post(PIFM_HOST+'/api/v2/reqcmds/{mac}'.format(mac=mac),
+                                     json={'status': 'error', 'msg': str(err)})
 
-        for command in commands:
-            output.append(sudo(command['command'], *command['args']))
+            return requests.post(PIFM_HOST+'/api/v2/reqcmds/{mac}'.format(mac=mac),
+                                 json={'status': 'OK', 'data': data})
 
-        if cmdreboot:
-            should_reboot = True
+        def _reqcmd():
+            logging.info("Found arbitrary commands to run.")
 
-        output = json.dumps(output)
-        # TODO: tell server the results
+            try:
+                commands = json.loads(piurl['requested_commands'])
+            except:
+                logging.info("Didn't get acceptable json for requested commands.")
+                return {'err': "pifm_client.py: malformed json for requested commands"}
+
+            output = []
+
+            for command in commands:
+                tmpout = sudo(command['cmd'], *command['args'])
+                output.append({'stdout': tmpout.stdout, 'stderr': tmpout.stderr})
+
+            output = json.dumps(output)
+            return {'data': output}
+
+        _reqcmd_resp(**_reqcmd())
+        del piurl['requested_commands']    # never cache this
 
 except KeyError:
     logging.info("No previous url in cache, so, we're initializing it.")
@@ -139,3 +149,4 @@ else:
 if should_reboot:
     sudo('reboot')
 
+# vim: set expandtab tabstop=4 shiftwidth=4 autoindent smartindent: 

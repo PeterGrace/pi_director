@@ -1,6 +1,7 @@
 from pyramid.response import Response
 from pyramid.view import view_config
 from cornice import Service
+import json
 import logging
 import sqlalchemy.exc
 from datetime import datetime
@@ -33,6 +34,8 @@ get_cache = Service(name='get_cache', path='/api/v1/cache/{uid}',
 
 reqcommands = Service(name='pi_reqcmds', path='/api/v2/reqcmds/{uid}',
                       description="handle arbitary commands to be run on the pi")
+
+logger = logging.getLogger('api')
 
 
 @screenshot.post(permission='anon')
@@ -115,16 +118,52 @@ def view_api_create_user(request):
 @get_cache.get(permission='anon')
 def view_json_get_pi(request):
     uid = request.matchdict['uid']
-    return get_pi_info(uid)
+    piinfo = get_pi_info(uid)
+
+    cmd_data = json.loads(piinfo['requested_commands'])
+    for i, cmdinfo in enumerate(cmd_data):
+        if cmdinfo['result']:
+            piinfo['requested_commands'] = ''
+            break
+
+    return piinfo
 
 
-@reqcommands.post(permission='admin')
-def view_api_reqcommands_results(request):
-    pass
+@reqcommands.post(permission='anon')
+def view_api_reqcommands_post(request):
+    uid = request.matchdict['uid']
+    results = request.json_body
+    results['data'] = json.loads(results['data'])
+
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
+        return {'status': 'error'}
+
+    cmd_data = json.loads(row.requested_commands)
+    new_data = []
+
+    for i, cmdinfo in enumerate(cmd_data):
+        if results['status'] == 'OK':
+            cmdinfo['result'] = results['data'][i]
+        else:
+            cmdinfo['result'] = results['msg']
+
+        new_data.append(cmdinfo)
+
+    row.requested_commands = json.dumps(new_data)
+    DBSession.flush()
+
+    return {'status': 'OK'}
 
 
 @reqcommands.get(permission='anon')
 def view_api_reqcommands_get(request):
-    cmdinfo = get_pi_cmd_info(request.matchdict['uid'])
-    
-    return get_pi_cmd_info(uid)
+    uid = request.matchdict['uid']
+
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
+        return {'status': 'error'}
+
+    cmd_data = json.loads(row.requested_commands)
+
+    return {'status': 'OK', 'data': data}

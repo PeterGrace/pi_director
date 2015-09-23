@@ -34,8 +34,16 @@ $(document).ready(function() {
 				if (result.status == 'OK') {
 					for (cmdid in result.data) {
 						var cmd = result.data[cmdid];
+						var res = cmd['result'];
+
 						cmdtext = '<pre>' + escapeHtml(cmd.cmd + ' ' + cmd.args.join(' ')) + '</pre>';
-						restext = '<pre>' + (cmd.result ? escapeHtml(cmd.result) : '&nbsp') + '</pre>';
+						restext = '<pre>' + (
+							cmd.result
+								? ( 'stdout:<br/>' + escapeHtml(res['stdout']) + '<br/><br/>'
+								  + 'stderr:<br/>' + escapeHtml(res['stderr']) + '')
+								: '&nbsp;'
+							) + '</pre>';
+						console.log(res);
 						$resultTBody.append(
 							'<tr><td>' + cmdtext + '</td><td>' + restext + '</td></tr>'
 						);

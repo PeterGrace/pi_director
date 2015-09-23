@@ -35,7 +35,7 @@ editCommandResults = Service(name='EditPiCommandResults', path='/ajax/CommandRes
 AuthUser = Service(name='AuthUser', path='/ajax/User/{email}',
                    description="Set User authentication")
 
-logger = logging.getLogger('ajax');
+logger = logging.getLogger('ajax')
 
 
 @editMAC.get(permission='anon')
@@ -118,7 +118,6 @@ def view_ajax_get_command_results(request):
     if row is None:
         return {'status': 'error'}
 
-    logger.info(row.requested_commands)
     data = json.loads(row.requested_commands)
 
     return {'status': 'OK', 'data': data}

@@ -54,7 +54,7 @@ def get_tagged_pis(tags):
 def get_pi_info(uid):
     tags = []
     row = DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
-    if row == None:
+    if row is None:
         row = RasPi()
         row.uuid = uid
         row.url = "http://www.stackexchange.com"
@@ -78,7 +78,7 @@ def get_pi_info(uid):
 def get_pi_cmd_info(uid):
     tags = []
     row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
-    if row == None:
+    if row is None:
         return []
     else:
         try:
