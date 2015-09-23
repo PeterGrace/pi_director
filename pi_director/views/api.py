@@ -1,6 +1,7 @@
 from pyramid.response import Response
 from pyramid.view import view_config
 from cornice import Service
+import json
 import logging
 import sqlalchemy.exc
 from datetime import datetime
@@ -14,66 +15,49 @@ from pi_director.models.models import (
 
 from pi_director.controllers.user_controls import make_an_admin
 from pi_director.controllers.controllers import get_pi_info
+from pi_director.controllers.controllers import get_pi_cmd_info
 
-reqcommands = Service(name='pi_reqcmds', path='/api/v2/reqcmds/{uid}', description="Service to handle arbitary commands to be run on the pi")
 
-screenshot = Service(name='pi_screen', path='/api/v1/screen/{uid}', description="Service to handle insertion and deletion of screenshots")
+screenshot = Service(name='pi_screen', path='/api/v1/screen/{uid}',
+                     description="Service to handle insertion and deletion of screenshots")
 
-ping = Service(name='pi_ping', path='/api/v1/ping/{uid}', description="Enable tracking of pi last seen")
-ping2 = Service(name='pi_pingv2', path='/api/v2/ping/{uid}/{ip}', description="Enable tracking of pi last seen and its ip address")
+ping = Service(name='pi_ping', path='/api/v1/ping/{uid}',
+               description="Enable tracking of pi last seen")
+ping2 = Service(name='pi_pingv2', path='/api/v2/ping/{uid}/{ip}',
+                description="Enable tracking of pi last seen and its ip address")
 
-authme = Service(name='user_create', path='/api/v1/authorize/{email}', description="Create new admin if none exists already")
+authme = Service(name='user_create', path='/api/v1/authorize/{email}',
+                 description="Create new admin if none exists already")
 
-get_cache = Service(name='get_cache',path='/api/v1/cache/{uid}', description="return data for the requested pi")
+get_cache = Service(name='get_cache', path='/api/v1/cache/{uid}',
+                    description="return data for the requested pi")
 
-@get_cache.get(permission='anon')
-def view_json_get_pi(request):
-    uid=request.matchdict['uid']
-    return get_pi_info(uid)
+reqcommands = Service(name='pi_reqcmds', path='/api/v2/reqcmds/{uid}',
+                      description="handle arbitary commands to be run on the pi")
 
-@ping2.get(permission='anon')
-def view_api_ping_v2(request):
+logger = logging.getLogger('api')
+
+
+@screenshot.post(permission='anon')
+def view_api_screenshot_save(request):
     uid = request.matchdict['uid']
-    ip = request.matchdict['ip']
+    imgblob = request.POST['screenshot'].file
 
-    now=datetime.now()
+    '''first, delete previous screenshot'''
+    DBSession.query(Screenshot).filter(Screenshot.uuid == uid).delete()
 
-    row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
-    if row==None:
-        row=RasPi()
-        row.uuid=uid
-        row.url="http://www.stackexchange.com"
-        row.landscape=True
-        row.description=""
-
-    row.lastseen=now
-    row.ip=ip
-    DBSession.add(row)
-    DBSession.flush()
-
-@ping.get(permission='anon')
-def view_api_ping(request):
-    uid = request.matchdict['uid']
-
-    now=datetime.now()
-
-    row=DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
-    if row==None:
-        row=RasPi()
-        row.uuid=uid
-        row.url="http://www.stackexchange.com"
-        row.landscape=True
-        row.description=""
-
-    row.lastseen=now
-    DBSession.add(row)
+    '''Now, lets make a new screenshot'''
+    foo = Screenshot()
+    foo.uuid = uid
+    foo.image = imgblob.read()
+    DBSession.add(foo)
     DBSession.flush()
 
 
 @screenshot.get(permission='admin')
 def view_api_screenshow_show(request):
-    uid=request.matchdict['uid']
-    shot=DBSession.query(Screenshot).filter(Screenshot.uuid==uid).first()
+    uid = request.matchdict['uid']
+    shot = DBSession.query(Screenshot).filter(Screenshot.uuid == uid).first()
     if shot:
         with BytesIO() as ss:
             ss.write(shot.image)
@@ -85,30 +69,101 @@ def view_api_screenshow_show(request):
             ss.write(emptypng)
             return Response(content_type='image/png', content_length=len(ss.getvalue()), body=ss.getvalue())
 
-@screenshot.post(permission='anon')
-def view_api_screenshot_save(request):
-    uid=request.matchdict['uid']
-    imgblob=request.POST['screenshot'].file
 
-    '''first, delete previous screenshot'''
-    DBSession.query(Screenshot).filter(Screenshot.uuid==uid).delete()
+@ping.get(permission='anon')
+def view_api_ping(request):
+    uid = request.matchdict['uid']
 
-    '''Now, lets make a new screenshot'''
-    foo=Screenshot()
-    foo.uuid=uid
-    foo.image=imgblob.read()
-    DBSession.add(foo)
+    now = datetime.now()
+
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
+        row = RasPi()
+        row.uuid = uid
+        row.url = "http://www.stackexchange.com"
+        row.landscape = True
+        row.description = ""
+
+    row.lastseen = now
+    DBSession.add(row)
     DBSession.flush()
 
-@reqcommands.get(permission='anon')
-def view_api_reqcommands_get(request):
-    pass
 
-@reqcommands.post(permission='anon')
-def view_api_reqcommands_results(request):
-    pass
+@ping2.get(permission='anon')
+def view_api_ping_v2(request):
+    uid = request.matchdict['uid']
+    ip = request.matchdict['ip']
+
+    now = datetime.now()
+
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
+        row = RasPi()
+        row.uuid = uid
+        row.url = "http://www.stackexchange.com"
+        row.landscape = True
+        row.description = ""
+
+    row.lastseen = now
+    row.ip = ip
+    DBSession.add(row)
+    DBSession.flush()
+
 
 @authme.get(permission='anon')
 def view_api_create_user(request):
-
     return make_an_admin(request)
+
+
+@get_cache.get(permission='anon')
+def view_json_get_pi(request):
+    uid = request.matchdict['uid']
+    piinfo = get_pi_info(uid)
+
+    cmd_data = json.loads(piinfo['requested_commands'])
+    for i, cmdinfo in enumerate(cmd_data):
+        if cmdinfo['result']:
+            piinfo['requested_commands'] = ''
+            break
+
+    return piinfo
+
+
+@reqcommands.post(permission='anon')
+def view_api_reqcommands_post(request):
+    uid = request.matchdict['uid']
+    results = request.json_body
+    results['data'] = json.loads(results['data'])
+
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
+        return {'status': 'error'}
+
+    cmd_data = json.loads(row.requested_commands)
+    new_data = []
+
+    for i, cmdinfo in enumerate(cmd_data):
+        if results['status'] == 'OK':
+            cmdinfo['result'] = results['data'][i]
+        else:
+            cmdinfo['result'] = results['msg']
+
+        new_data.append(cmdinfo)
+
+    row.requested_commands = json.dumps(new_data)
+    DBSession.flush()
+
+    return {'status': 'OK'}
+
+
+@reqcommands.get(permission='anon')
+def view_api_reqcommands_get(request):
+    uid = request.matchdict['uid']
+
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
+        return {'status': 'error'}
+
+    cmd_data = json.loads(row.requested_commands)
+
+    return {'status': 'OK', 'data': data}

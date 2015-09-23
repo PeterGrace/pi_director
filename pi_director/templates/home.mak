@@ -65,7 +65,11 @@
 							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#deleteModal" href="#deleteModal" class="macdelete">Delete</a>
 							<li role="separator" class="divider"</li>
 							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#tagModal" href="#tagModal" class="tagedit">Tag Management</a>
-							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandModal" href="#commandModal" class="sendcommands">Send Commands</a>	
+		%if pi.requested_commands:
+							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandResultModal" href="#commandResultModal" class="commandsresults">Command Results</a>
+		%else:
+							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandModal" href="#commandModal" class="sendcommands">Send Commands</a>
+		%endif
 						</ul>
 					</div>
 				</td>
@@ -158,6 +162,36 @@
 	</div>
 </div>
 
+<div class="modal fade" id="commandResultModal" style="margin: 10% 10% 0 10%;">
+	<div class="modal-content">
+		<div class="modal-header">
+			<a href="#" class="close" data-dismiss="modal">x</a>
+			<h3> Command(s) Results </h3>
+		</div>
+		<div class="modal-body">
+			<p>If the pi has executed commands, their results (if any) will turn up here.
+			Deleting results/pending commands after the pi has checked in but before it has
+			returned results could be problematic and is not recommended (but supported).</p>
+			<table class="table table-striped" id="commandResults">
+				<thead>
+					<tr>
+						<th class="col-xs-2">Command</th>
+						<th>Result</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="modal-footer">
+			<a href="#" class="btn btn-danger pull-left" id="commandResultDelete">Delete Results/Pending Commands</a>
+			<a href="#" class="btn btn-info" data-dismiss="modal">Close</a>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+
 <div class="modal fade" id="commandModal" style="margin: 10% 10% 0 10%;">
 	<div class="modal-content">
 		<div class="modal-header">
@@ -166,7 +200,7 @@
 		</div>
 		<div class="modal-body">
 			<p>Note that commands will be run as root via sudo next time the pi checks in.
-			Execution working directory begins in /home/pi, arguments are for a specific command.</p>
+			Execution working directory begins in /home/pi, arguments are for each specific command.</p>
 
 			<form class="form-horizontal table-responsive" id="commandModalCommands">
 			</form>
@@ -178,14 +212,17 @@
 						<th>Arguments</th>
 					</tr>
 				</thead>
-				<tr>
-					<td><input type="text" name="command[]" class="form-control commandModal" placeholder="cmd" /></td>
-					<td><input type="text" name="args[]" class="form-control" placeholder="argument" /></td>
-				</tr>
+				<tbody>
+					<tr>
+						<td><input type="text" class="form-control" placeholder="cmd" /></td>
+						<td><input type="text" class="form-control" placeholder="argument" /></td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 
 		<div class="modal-footer">
+			<a href="#" class="btn btn-info pull-left" id="commandModalClear">Reset Form</a>
 			<a href="#" class="btn btn-danger" id="commandModalQueue">Queue Execution</a>
 			<a href="#" class="btn btn-warning" data-dismiss="modal">Cancel</a>
 		</div>
@@ -196,7 +233,10 @@
 </%block>
 
 <%block name="ScriptContent">
-<script>
+<script type="text/javascript">
+
+////////////////////////////////////////
+// EDIT PI MODAL
 addLoadEvent(function() {
 	$(".macdelete").click(function(e) {
 		e.preventDefault();
@@ -246,6 +286,7 @@ addLoadEvent(function() {
 		var newLandscape = $("#modalLandscape").prop('checked');
 		$.ajax({
 			type: "POST",
+			cache: false,
 			url: '/ajax/PiUrl/'+modalMAC,
 			data: JSON.stringify({'url':newURL,'landscape':newLandscape,'description':newDesc}),
 			success: function(result) {
@@ -256,7 +297,10 @@ addLoadEvent(function() {
 	});
 });
 
-addLoadEvent(function() {	
+
+////////////////////////////////////////
+// TOOLTIP RELOADING
+$(document).ready(function() {
 	function fixup_cburl(url) {
 		var d = new Date().getTime();
 		
@@ -286,29 +330,12 @@ addLoadEvent(function() {
 	setInterval(reload_tooltip, 30000);
 });
 
-////////////////////////////////////////
-// SEND COMMAND(S) MODAL
-
-$(document).ready(function() {
-	$("#commandModal").one('show.bs.modal', function() {
-		var $tmp = $(this).find('#commandModalTemplate').clone().attr('id', '');
-
-		$(this).find('#commandModalCommands').empty().append($tmp);
-	});
-});
-
-addLoadEvent(function() {
-	$(".sendcommands").click(function(e) {
-		e.preventDefault();
-		var id = $(this).attr("data-id");
-	});
-
-	$("#commandModalQueue").click(function(e) {
-		e.preventDefault();
-
-		console.log($('#commandModalCommands').serialize());
-	});
-});
-
 </script>
+
+<!-- SEND COMMAND(S) MODAL -->
+<script type="text/javascript" src="${request.static_url('pi_director:static/js/commands_modal.js')}"></script>
+
+<!-- COMMANDS(S) RESULTS MODAL -->
+<script type="text/javascript" src="${request.static_url('pi_director:static/js/commands_results_modal.js')}"></script>
+
 </%block>

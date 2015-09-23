@@ -24,6 +24,15 @@
 			}
 		}
 	}
+
+	//http://stackoverflow.com/a/13371349/274549
+	var escapeHtml = (function () {
+		'use strict';
+		var chr = { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+		return function (text) {
+			return text.replace(/[\"&<>]/g, function (a) { return chr[a]; });
+		};
+	}());
 </script>
 
 <nav class="navbar navbar-inverse navbar-static-top">

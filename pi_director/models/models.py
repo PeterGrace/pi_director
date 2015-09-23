@@ -34,6 +34,13 @@ class RasPi(Base):
     requested_commands = Column(Text)
     tags = relationship("Tags")
 
+    def get_dict(self):
+        dict_ = {}
+        for key in self.__mapper__.c.keys():
+            dict_[key] = getattr(self, key)
+
+        dict_['lastseen'] = str(self.lastseen)
+        return dict_
 
 class Tags(Base):
     __tablename__ = 'Tags'

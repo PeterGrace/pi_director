@@ -5,18 +5,13 @@ Everytime the pifm client checks into the server it gets a list of settings
 
 Requested commands json should be the encoding of an object like this:
 
-{
-    'rebootafter': true|false,
-    'commands': [{
-        'command': 'binary_to_execute',
-        'args': [
-            'arbitrary', 'arguments', 'passed', 'to', 'command',
-        ]
-    },{
-        'command': 'some_other_binary_to_execute',
-        'args': 'other', 'args',
-    }]
-}
-
-
+[{
+    'cmd': 'binary_to_execute',
+    'args': ['arbitrary', 'arguments', 'passed', 'to', 'command'],
+    'result': ''
+},{
+    'cmd': 'some_other_binary_to_execute',
+    'args': ['other', 'args'],
+    'result': ''
+}]
 
