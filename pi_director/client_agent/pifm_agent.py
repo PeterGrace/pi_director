@@ -10,7 +10,7 @@ import atexit
 from sh import sudo
 
 CACHE_FILE = "/home/pi/cache.pickle"
-PIFM_HOST = "http://den-storno-itlin.ds.stackexchange.com:6543"
+PIFM_HOST = "http://pi_director"
 LOCK_DIR = "/dev/shm/pifm.lock"
 
 logging.basicConfig(level=logging.INFO)
