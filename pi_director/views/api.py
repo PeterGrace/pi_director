@@ -120,14 +120,16 @@ def view_json_get_pi(request):
     uid = request.matchdict['uid']
     piinfo = get_pi_info(uid)
 
-    if piinfo['requested_commands'] is None:
-        piinfo['requested_commands'] = ''
 
-    cmd_data = json.loads(piinfo['requested_commands'])
-    for i, cmdinfo in enumerate(cmd_data):
-        if cmdinfo['result']:
-            piinfo['requested_commands'] = ''
-            break
+    try:
+        cmd_data = json.loads(piinfo['requested_commands'])
+        for i, cmdinfo in enumerate(cmd_data):
+            if cmdinfo['result']:
+                piinfo['requested_commands'] = ''
+                break
+    except (ValueError, TypeError):
+        pass            
+        
 
     return piinfo
 
