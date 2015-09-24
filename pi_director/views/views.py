@@ -73,7 +73,7 @@ def view_users(request):
     return {"loginurl": loginurl, "logged_in": logged_in, "logouturl": request.route_url('logout'), 'users': UserList}
 
 
-@view_config(route_name='tagged', renderer="pi_director:templates/tagged.mak", permission="admin")
+@view_config(route_name='tagged', renderer="pi_director:templates/home.mak", permission="admin")
 def view_tagged(request):
     tags = request.matchdict['tags']
     tagged_pis = get_tagged_pis(tags)
