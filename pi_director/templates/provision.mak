@@ -40,6 +40,7 @@ apt-get -y install unclutter xdotool matchbox-window-manager chromium python-pip
 wget ${BASEURL}/client_agent/xsession -O .xsession
 wget ${BASEURL}/client_agent/keydown.sh -O keydown.sh
 wget ${BASEURL}/client_agent/refresh.sh -O refresh.sh
+wget ${BASEURL}/client_agent/xdokey.sh -O xdokey.sh
 wget ${BASEURL}/client_agent/frozen_screen_detect.sh -O frozen_screen_detect.sh
 wget ${BASEURL}/client_agent/pifm_agent.py -O pifm_agent.py
 
