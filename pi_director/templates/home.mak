@@ -32,7 +32,7 @@
 		%endif
 		% if (timediff.total_seconds() > 300):
 				<button class="pull-right btn btn-xs btn-danger" title="Last seen ${int(timediff.total_seconds())} seconds ago">OFFLINE</button></td>
-		% elif (timediff.total_seconds() > 60):
+		% elif (timediff.total_seconds() > 70):
 				<button class="pull-right btn btn-xs btn-warning" title="Last seen ${int(timediff.total_seconds())} seconds ago">LAGGED</button></td>
 		% else:
 				<button class="pull-right btn btn-xs btn-info" title="Last seen ${int(timediff.total_seconds())} seconds ago">OK</button></td>
