@@ -1,8 +1,19 @@
 #!/usr/bin/env bash
 MAC=$(ip link show eth0 | grep ether|awk '{print $2}')
 
+#Sometimes chromium is unceremoniously killed and SingletonLock remains.  Remove it.
+find ~/.config -name SingletonLock -delete >> /dev/null 2>&1
+
+#If we've loaded a newer chromium on the machine, the executable name has changed.
+if [[ -f /usr/bin/chromium-browser ]]
+then
+        PROG=/usr/bin/chromium-browser
+else
+        PROG=/usr/bin/chromium
+fi
+
 unclutter &
 matchbox-window-manager &
-/usr/bin/chromium --kiosk --incognito --window-position=0,0 --window-size=1920,1080 http://pi_director/go/${MAC} &
+$PROG --kiosk --incognito --window-position=0,0 --window-size=1920,1080 http://pi_director/go/${MAC} &
 ~/keydown.sh
 
