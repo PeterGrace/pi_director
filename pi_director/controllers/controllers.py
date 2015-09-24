@@ -72,6 +72,7 @@ def get_pi_info(uid):
             pass
 
     rowdict = row.get_dict()
+    rowdict['tags']=tags
     return rowdict
 
 
@@ -89,4 +90,5 @@ def get_pi_cmd_info(uid):
             pass
 
     rowdict = row.get_dict()
+    rowdict['tags']=tags
     return rowdict
