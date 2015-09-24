@@ -54,6 +54,9 @@
 		</div><!--/.nav-collapse -->
 	</div>
 </nav>
+<div class="alert-messages text-center">
+</div>
+
 
 <div class="container">
 <%block name="BlockContent"/>
@@ -62,6 +65,19 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="${request.static_url('pi_director:static/js/bootstrap.min.js')}"></script>
 <script src="${request.static_url('pi_director:static/js/bootstrap-modal.js')}"></script>
+
+<script>
+function showAndDismissAlert(type, message) {
+    var htmlAlert = '<div class="alert alert-' + type + '">' + message + '</div>';
+
+    // Prepend so that alert is on top, could also append if we want new alerts to show below instead of on top.
+    $(".alert-messages").prepend(htmlAlert);
+
+    // Since we are prepending, take the first alert and tell it to fade in and then fade out.
+    // Note: if we were appending, then should use last() instead of first()
+    $(".alert-messages .alert").first().hide().fadeIn(200).delay(2000).fadeOut(1000, function () { $(this).remove(); });
+}
+</script>
 
 <%block name="ScriptContent"/>
 
