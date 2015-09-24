@@ -61,14 +61,16 @@
 					<div class="dropdown">
 						<button class="btn btn-default dropdown-toggle" type="button" id="dropdown-${pi.uuid}" data-toggle="dropdown">Actions<span class="caret"></span></button>
 						<ul class="dropdown-menu" aria-labelledby="dropdown-${pi.uuid}">
-							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#editModal" href="#editModal" class="macedit">Edit</a>
-							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#deleteModal" href="#deleteModal" class="macdelete">Delete</a>
+							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#editModal" href="#editModal" class="macedit">Edit</a></li>
+							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#deleteModal" href="#deleteModal" class="macdelete">Delete</a></li>
 							<li role="separator" class="divider"</li>
-							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#tagModal" href="#tagModal" class="tagedit">Tag Management</a>
+							<li><a href="#" data-id="${pi.uuid}" class="refreshPi">Refresh</a></li>
+							<li role="separator" class="divider"</li>
+							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#tagModal" href="#tagModal" class="tagedit">Tag Management</a></li>
 		%if pi.requested_commands:
-							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandResultModal" href="#commandResultModal" class="commandsresults">Command Results</a>
+							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandResultModal" href="#commandResultModal" class="commandsresults">Command Results</a></li>
 		%else:
-							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandModal" href="#commandModal" class="sendcommands">Send Commands</a>
+							<li><a href="#" data-id="${pi.uuid}" data-toggle="modal" data-target="#commandModal" href="#commandModal" class="sendcommands">Send Commands</a></li>
 		%endif
 						</ul>
 					</div>
@@ -297,6 +299,19 @@ addLoadEvent(function() {
 	});
 });
 
+addLoadEvent(function() {
+	$(".refreshPi").click(function(e) {
+		e.preventDefault();
+		var id = $(this).attr("data-id");
+		$.ajax({
+			type: "GET",
+			url: '/api/v1/refresh/'+id,
+			success: function(formdata) {
+				showAndDismissAlert('success', 'Command Queued!');
+			}
+		});
+	});
+});
 
 ////////////////////////////////////////
 // TOOLTIP RELOADING
