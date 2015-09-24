@@ -7,10 +7,9 @@
 	<table class="table table-striped" id="PiTable">
 		<thead>
 			<tr>
-				<th>MAC</th>
+				<th>Pi</th>
 				<th>Screen</th>
 				<th>Description</th>
-				<th>Last Seen</th>
 				<th>URL</th>
 				<th>Orientation</th>
 				<th>Actions</th>
@@ -19,13 +18,6 @@
 		<tbody>
 	% for pi in pis:
 			<tr>
-		% if pi.ip == None:
-				<td>${pi.uuid}</td>
-		% else:
-				<td>${pi.uuid} (${pi.ip})</td>
-		%endif
-				<td><span class="screenshotMO" data-toggle="tooltip" data-placement="right" title="<img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=270 width=480>"><img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=67 width=120></span></td>
-				<td>${pi.description}</td>
 <%
 		from datetime import datetime, timedelta
 		if pi.lastseen is None:
@@ -33,14 +25,21 @@
 		else:
 			timediff = datetime.now() - pi.lastseen
 %>
-
-		% if (timediff.total_seconds() > 300):
-				<td><div class="alert alert-danger">${int(timediff.total_seconds())} seconds ago</div></td>
-		% elif (timediff.total_seconds() > 60):
-				<td><div class="alert alert-warning">${int(timediff.total_seconds())} seconds ago</div></td>
+		% if pi.ip == None:
+				<td>${pi.uuid}<br>
 		% else:
-				<td><div class="alert alert-info">${int(timediff.total_seconds())} seconds ago</div></td>
+				<td>${pi.uuid}<br>(${pi.ip})<br>
+		%endif
+		% if (timediff.total_seconds() > 300):
+				<button class="pull-right btn btn-xs btn-danger" title="Last seen ${int(timediff.total_seconds())} seconds ago">OFFLINE</button></td>
+		% elif (timediff.total_seconds() > 60):
+				<button class="pull-right btn btn-xs btn-warning" title="Last seen ${int(timediff.total_seconds())} seconds ago">LAGGED</button></td>
+		% else:
+				<button class="pull-right btn btn-xs btn-info" title="Last seen ${int(timediff.total_seconds())} seconds ago">OK</button></td>
 		% endif
+				<td><span class="screenshotMO" data-toggle="tooltip" data-placement="right" title="<img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=270 width=480>"><img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=67 width=120></span></td>
+				<td>${pi.description}</td>
+
 	
 		% if len(pi.tags)==0:
 				<td>${pi.url}</td>
