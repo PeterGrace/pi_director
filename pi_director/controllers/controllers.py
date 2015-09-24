@@ -47,7 +47,7 @@ def get_tagged_pis(tags):
         for pi in PisWithTags:
             tagged_pis.append(pi.uuid)
 
-    PiList = DBSession.query(MyModel).filter(MyModel.uuid.in_(tagged_pis)).order_by(desc(MyModel.lastseen)).all()
+    PiList = DBSession.query(RasPi).filter(RasPi.uuid.in_(tagged_pis)).order_by(desc(RasPi.lastseen)).all()
     return PiList
 
 

@@ -91,13 +91,21 @@
 		<div class="modal-body">
 			<form class="form-horizontal">
 				<div class="form-group">
-					<label for="modalMAC" class="control-label col-xs-2">Current tags</label>
-					<div class="col-xs-10">
-					</div>
+					<label for="divTagList" class="control-label col-xs-2">Current tags</label>
+					<div class="col-xs-10" id="divTagList"></div>
 				</div>
+				<br>
+				<div class="form-group">
+					<label for="iptAddTag" class="control-label col-xs-2">Add New Tag</label>
+					<div class="col-xs-2">
+					<input type="text" class="form-control" id="iptAddTag" placeholder="tag" />
+					</div>
+					<button class="btn btn-sm btn-normal" id="btnAddTag">Add Tag</button>
+				</div>
+			</form>
 		</div>
 		<div class="modal-footer">
-			<button type="button" href="#" class="btn btn-lg btn-normal" data-dismiss="modal">Done</a>
+			<button type="button" href="#" class="btn btn-lg btn-normal" data-dismiss="modal" id="btnDoneTag">Done</a>
 		</div>
 		<div class="clearfix"></div>
 	</div>
@@ -309,6 +317,76 @@ addLoadEvent(function() {
 				showAndDismissAlert('success', 'Command Queued!');
 			}
 		});
+	});
+});
+
+addLoadEvent(function() {
+	$("#btnDoneTag").click(function(e) {
+		e.preventDefault();
+		location.reload(true);
+	});
+});
+addLoadEvent(function() {
+	$("#btnAddTag").click(function(e) {
+		e.preventDefault();
+		var id = window.current_pi;
+		var tag = $("#iptAddTag").val();
+		$.ajax({
+			type: "POST",
+			cache: false,
+			url: '/api/v1/tags/'+id,
+			data: JSON.stringify({'uid':id,'tag':tag}),
+			success: function(result) {
+				reloadTagList(id);
+			},
+			failure: function(result) {
+				alert(result);
+			}
+		});
+	});
+});
+
+addLoadEvent(function() {
+	$(".tagedit").click(function(e) {
+		e.preventDefault();
+		window.current_pi = $(this).attr("data-id");
+		reloadTagList(window.current_pi);
+	});
+});
+
+
+function reloadTagList(id) {
+	$.ajax({
+		type: "GET",
+		cache: false,
+		url: '/api/v1/cache/'+id,
+		success: function(result) {
+			$('#divTagList').html('');
+			for(i=0;i<result['tags'].length;i++)
+			{
+				val=$('#divTagList').html();
+				val = val + "<button data-id=\"" + id + "\" class=\"btn btn-primary btn-sm removetag\">" + result['tags'][i] + "</button>&nbsp;";
+				$('#divTagList').html(val);
+			};
+		}
+	});
+};
+
+addLoadEvent(function() {
+	$(".removetag").click(function(e) {
+		console.log("fired");
+		e.preventDefault();
+		var id = $(this).attr("data-id");
+		var tag = $(this).attr("value");
+		$.ajax({
+			type: "DELETE",
+			cache: false,
+			url: '/api/v1/tags/' + id + '/' + tag,
+			success: function(result) {
+				reloadTagList(id);
+			}
+		});
+
 	});
 });
 

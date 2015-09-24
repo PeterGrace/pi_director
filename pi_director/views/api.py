@@ -1,15 +1,20 @@
 from pyramid.response import Response
 from pyramid.view import view_config
 from cornice import Service
+import pdb
+import pprint
 import json
 import logging
 import sqlalchemy.exc
+from sqlalchemy import and_
+from pyramid.httpexceptions import HTTPInternalServerError
 from datetime import datetime
 from io import BytesIO
 
 from pi_director.models.models import (
     DBSession,
     RasPi,
+    Tags,
     Screenshot
     )
 
@@ -38,7 +43,27 @@ reqcommands = Service(name='pi_reqcmds', path='/api/v2/reqcmds/{uid}',
 refresh = Service(name='pi_refresh', path ='/api/v1/refresh/{uid}',
                       description="send a refresh command request to the pi")
 
+
+tags = Service(name='pi_tags', path='/api/v1/tags/{uid}/{tag}')
+
 logger = logging.getLogger('api')
+
+@tags.delete(permission='admin')
+def view_api_delete_tag(request):
+    uid=request.matchdict['uid']
+    tag=request.matchdict['tag']
+    DBSession.query(Tags).filter(and_(Tags.uuid == uuid,Tags.tag == tag)).delete()
+
+@tags.post(permission='admin')
+def view_api_post_new_tag(request):
+    uid=request.matchdict['uid']
+    tag=request.matchdict['tag']
+    newtag = Tags()
+    newtag.uuid=uid
+    newtag.tag=tag
+    DBSession.add(newtag)
+    DBSession.flush()
+
 
 @refresh.get(permission='admin')
 def view_api_refresh_get(request):
