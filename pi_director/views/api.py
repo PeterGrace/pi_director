@@ -35,7 +35,38 @@ get_cache = Service(name='get_cache', path='/api/v1/cache/{uid}',
 reqcommands = Service(name='pi_reqcmds', path='/api/v2/reqcmds/{uid}',
                       description="handle arbitary commands to be run on the pi")
 
+refresh = Service(name='pi_refresh', path ='/api/v1/refresh/{uid}',
+                      description="send a refresh command request to the pi")
+
 logger = logging.getLogger('api')
+
+@refresh.get(permission='admin')
+def view_api_refresh_get(request):
+    uid = request.matchdict['uid']
+
+    refresh_cmd={}
+    refresh_cmd['cmd']='su'
+    refresh_cmd['args']=['-c','/home/pi/refresh.sh','pi']
+    refresh_cmd['result']=''
+
+
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    if row is None:
+        return {'status': 'error'}
+
+    try:
+        #If there are already records to be run, we'll start with them in the array already
+        cmd_data = json.loads(row.requested_commands)
+    except (ValueError, TypeError):
+        cmd_data=[]
+        pass
+             
+    cmd_data.append(refresh_cmd)
+
+    row.requested_commands = json.dumps(cmd_data)
+    DBSession.flush()
+
+    return {'status': 'OK'}
 
 
 @screenshot.post(permission='anon')
@@ -124,9 +155,14 @@ def view_json_get_pi(request):
     try:
         cmd_data = json.loads(piinfo['requested_commands'])
         for i, cmdinfo in enumerate(cmd_data):
-            if cmdinfo['result']:
+            try:
+                if cmdinfo['result']:
+                    piinfo['requested_commands'] = ''
+                    break
+            except KeyError:
+                #There was no result field in the cmd_info structure, lets add it and act like it was always there
+                cmdinfo['result']=''        
                 piinfo['requested_commands'] = ''
-                break
     except (ValueError, TypeError):
         pass            
         
