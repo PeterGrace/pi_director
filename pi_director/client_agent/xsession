@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 MAC=$(ip link show eth0 | grep ether|awk '{print $2}')
 BASEURL="http://pi_director"
-BROWSER=$(curl http://${BASEURL}/api/v1/cache/${MAC} 2>/dev/null|python -c 'import sys,json; print json.load(sys.stdin)["browser"]')
-CMD=$(curl http://${BASEURL}/api/v1/cache/${MAC} 2>/dev/null|python -c 'import sys,json; print json.load(sys.stdin)["url"]')
+BROWSER=$(curl ${BASEURL}/api/v1/cache/${MAC} 2>/dev/null|python -c 'import sys,json; print json.load(sys.stdin)["browser"]')
+CMD=$(curl ${BASEURL}/api/v1/cache/${MAC} 2>/dev/null|python -c 'import sys,json; print json.load(sys.stdin)["url"]')
 
 
 unclutter &
