@@ -52,7 +52,7 @@ logger = logging.getLogger('api')
 def view_api_delete_tag(request):
     uid=request.matchdict['uid']
     tag=request.matchdict['tag']
-    DBSession.query(Tags).filter(and_(Tags.uuid == uuid,Tags.tag == tag)).delete()
+    DBSession.query(Tags).filter(and_(Tags.uuid == uid,Tags.tag == tag)).delete()
 
 @tags.post(permission='admin')
 def view_api_post_new_tag(request):
