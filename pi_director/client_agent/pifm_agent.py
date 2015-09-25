@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import subprocess
 import sys
 import pickle
 import requests
@@ -13,7 +14,9 @@ CACHE_FILE = "/home/pi/cache.pickle"
 PIFM_HOST = "http://pi_director"
 LOCK_DIR = "/dev/shm/pifm.lock"
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(filename='pi_director.log', level=logging.INFO)
+# http://stackoverflow.com/questions/13733552/
+logging.getLogger().addHandler(logging.StreamHandler())
 
 
 def release_lock():
@@ -137,6 +140,36 @@ except KeyError:
     sudo('service', 'lightdm', 'restart')
     should_reboot = True
 
+
+# Push logs to Server
+# Compare cache to current
+logdir = '/var/log/'
+logfiles = ['pi_director.log', logdir+'daemon.log',
+            logdir+'debug', logdir+'messages',
+            logdir+'kern.log', logdir+'syslog',
+            logdir+'daily.out']
+log_offset = '524288'  # Byes of log to send
+
+for logfile in logfiles:
+    post_needed = False
+    if os.path.isfile(logfile):
+        command = ['tail', '-c', log_offset, logfile]
+        log_tail = subprocess.check_output(command)
+        if logfile not in cache.keys():
+            cache[logfile] = log_tail
+            post_needed = True
+        if log_tail != cache[logfile]:
+            cache[logfile] = log_tail
+            post_needed = True
+        else:
+            logging.debug("No change detected in "+logfile)
+
+        if post_needed:
+            payload = {'pi_log': log_tail, 'filename': logfile}
+            file_response = requests.post(PIFM_HOST+'/api/v1/pi_log/'+mac,
+                                          data=payload)
+            logging.info(file_response)
+# Send if changed
 
 '''Commit cache to disk'''
 if cmp(cache, original_cache) != False:

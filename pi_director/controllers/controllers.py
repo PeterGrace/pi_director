@@ -3,13 +3,28 @@ import logging
 from pi_director.models.models import (
     DBSession,
     RasPi,
-    Tags
+    Tags,
+    Logs
     )
 from sqlalchemy import desc, and_
 
+
 def get_pis():
-    PiList=DBSession.query(RasPi).filter(RasPi.uuid!="default").order_by(desc(RasPi.lastseen)).all()
+    PiList = DBSession.query(RasPi).filter(RasPi.uuid!="default").order_by(desc(RasPi.lastseen)).all()
     return PiList
+
+
+def get_logs(uuid):
+    logs = DBSession.query(Logs).filter(Logs.uuid==uuid).all()
+    return logs
+
+
+def get_log(uuid, filename):
+    log = DBSession.query(Logs).filter(
+          Logs.uuid == uuid).filter(
+          Logs.filename == filename).first()
+
+    return log
 
 
 def get_tagged_pis(tags):
