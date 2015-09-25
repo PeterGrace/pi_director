@@ -31,11 +31,11 @@
 				<td>${pi.uuid}<br>(${pi.ip})<br>
 		%endif
 		% if (timediff.total_seconds() > 300):
-				<button class="pull-right btn btn-xs btn-danger" title="Last seen ${int(timediff.total_seconds())} seconds ago">OFFLINE</button></td>
+				<a href='logs/${pi.uuid}'><button class="pull-right btn btn-xs btn-danger" title="Last seen ${int(timediff.total_seconds())} seconds ago">OFFLINE</button></td></a>
 		% elif (timediff.total_seconds() > 70):
-				<button class="pull-right btn btn-xs btn-warning" title="Last seen ${int(timediff.total_seconds())} seconds ago">LAGGED</button></td>
+				<a href='logs/${pi.uuid}'><button class="pull-right btn btn-xs btn-warning" title="Last seen ${int(timediff.total_seconds())} seconds ago">LAGGED</button></td></a>
 		% else:
-				<button class="pull-right btn btn-xs btn-info" title="Last seen ${int(timediff.total_seconds())} seconds ago">OK</button></td>
+				<a href='logs/${pi.uuid}'><button class="pull-right btn btn-xs btn-info" title="Last seen ${int(timediff.total_seconds())} seconds ago">OK</button></td></a>
 		% endif
 				<td><span class="screenshotMO" data-toggle="tooltip" data-placement="right" title="<img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=270 width=480>"><img src='${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}' height=67 width=120></span></td>
 				<td>${pi.description}</td>

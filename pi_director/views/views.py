@@ -22,6 +22,7 @@ from pi_director.security import (
 
 from pi_director.controllers.controllers import (
     get_pis,
+    get_logs,
     get_tagged_pis,
     )
 from pi_director.controllers.user_controls import get_users
@@ -71,6 +72,13 @@ def view_users(request):
     loginurl = login_url(request, 'google')
     UserList = get_users()
     return {"loginurl": loginurl, "logged_in": logged_in, "logouturl": request.route_url('logout'), 'users': UserList}
+
+
+@view_config(route_name='logs', renderer="pi_director:templates/logs.mak", permission='admin')
+def view_logs(request):
+    uuid = request.matchdict['uuid']
+    logs = get_logs(uuid)
+    return {"logs": logs, "uuid": uuid}
 
 
 @view_config(route_name='tagged', renderer="pi_director:templates/home.mak", permission="admin")
