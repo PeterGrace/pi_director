@@ -397,10 +397,6 @@ $(document).ready(function() {
 	});
 });
 
-addLoadEvent(function() {
-
-});
-
 ////////////////////////////////////////
 // TOOLTIP RELOADING
 $(document).ready(function() {
