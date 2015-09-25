@@ -63,13 +63,15 @@ def view_json_set_pi(request):
     row.url = response['url']
     row.description = response['description']
     row.landscape = response['landscape']
+    row.browser = response['browser']
     DBSession.add(row)
     DBSession.flush()
     rowdict = {
         'uuid': row.uuid,
         'url': row.url,
         'description': row.description,
-        'landscape': row.landscape
+        'landscape': row.landscape,
+        'browser': row.browser
     }
     return rowdict
 
