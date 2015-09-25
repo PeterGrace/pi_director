@@ -326,32 +326,9 @@ addLoadEvent(function() {
 		location.reload(true);
 	});
 });
-addLoadEvent(function() {
-	$("#btnAddTag").click(function(e) {
-		e.preventDefault();
-		var id = window.current_pi;
-		var tag = $("#iptAddTag").val();
-		$.ajax({
-			type: "POST",
-			cache: false,
-			url: '/api/v1/tags/'+id,
-			data: JSON.stringify({'uid':id,'tag':tag}),
-			success: function(result) {
-				reloadTagList(id);
-			},
-			failure: function(result) {
-				alert(result);
-			}
-		});
-	});
-});
 
 addLoadEvent(function() {
-	$(".tagedit").click(function(e) {
-		e.preventDefault();
-		window.current_pi = $(this).attr("data-id");
-		reloadTagList(window.current_pi);
-	});
+
 });
 
 
@@ -361,33 +338,67 @@ function reloadTagList(id) {
 		cache: false,
 		url: '/api/v1/cache/'+id,
 		success: function(result) {
-			$('#divTagList').html('');
+			var $divTagList = $('#divTagList').empty();
 			for(i=0;i<result['tags'].length;i++)
 			{
-				val=$('#divTagList').html();
-				val = val + "<button data-id=\"" + id + "\" class=\"btn btn-primary btn-sm removetag\">" + result['tags'][i] + "</button>&nbsp;";
-				$('#divTagList').html(val);
-			};
+				$divTagList.append($(
+					"<button data-id=\"" + id + "\" class=\"btn btn-primary btn-sm\">" + result['tags'][i] + "</button>&nbsp;"
+				).click(function(e) {
+					e.preventDefault();
+					var id = $('#tagModal').data('uid');
+					var tag = $(this).text();
+					
+					console.log('/api/v1/tags/' + id + '/' + tag);
+					console.log(id);
+					console.log(tag);
+					$.ajax({
+						type: "DELETE",
+						cache: false,
+						url: '/api/v1/tags/' + id + '/' + tag,
+						success: function(result) {
+							reloadTagList(id);
+						}
+					});
+				}));
+			}
 		}
 	});
-};
+}
+
+$(document).ready(function() {
+
+	$('#tagModal').one('show.bs.modal', function(e) {
+		$("#btnAddTag").click(function(e) {
+			e.preventDefault();
+			var id = $('#tagModal').data('uid');
+			var tag = $("#iptAddTag").val();
+			$.ajax({
+				type: "POST",
+				cache: false,
+				url: '/api/v1/tags/'+id+ '/' + tag,
+				data: JSON.stringify({'uid':id,'tag':tag}),
+				success: function(result) {
+					reloadTagList(id);
+				},
+				failure: function(result) {
+					alert(result);
+				}
+			});
+		});
+	}).on('show.bs.modal', function(e) {
+		var myid = $(e.relatedTarget).data('id');
+
+		if (typeof(myid) == 'undefined') {
+			return;
+		}
+
+		$('#tagModal').attr('data-uid', myid);
+		reloadTagList(myid);
+	});
+});
 
 addLoadEvent(function() {
-	$(".removetag").click(function(e) {
-		console.log("fired");
-		e.preventDefault();
-		var id = $(this).attr("data-id");
-		var tag = $(this).attr("value");
-		$.ajax({
-			type: "DELETE",
-			cache: false,
-			url: '/api/v1/tags/' + id + '/' + tag,
-			success: function(result) {
-				reloadTagList(id);
-			}
-		});
 
-	});
 });
 
 ////////////////////////////////////////
