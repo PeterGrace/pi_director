@@ -28,6 +28,7 @@ class RasPi(Base):
     uuid = Column(Text, primary_key=True)
     url = Column(Text)
     landscape = Column(Boolean)
+    orientation = Column(Integer)
     description = Column(Text)
     lastseen = Column(DateTime)
     ip = Column(Text)
