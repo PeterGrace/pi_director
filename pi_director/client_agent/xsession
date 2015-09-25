@@ -1,19 +1,29 @@
 #!/usr/bin/env bash
 MAC=$(ip link show eth0 | grep ether|awk '{print $2}')
+HOST="pi_director"
+BROWSER=$(curl http://${HOST}/api/v1/cache/${MAC} 2>/dev/null|python -c 'import sys,json; print json.load(sys.stdin)["browser"]')
+CMD=$(curl http://${HOST}/api/v1/cache/${MAC} 2>/dev/null|python -c 'import sys,json; print json.load(sys.stdin)["url"]')
 
-#Sometimes chromium is unceremoniously killed and SingletonLock remains.  Remove it.
-find ~/.config -name SingletonLock -delete >> /dev/null 2>&1
-
-#If we've loaded a newer chromium on the machine, the executable name has changed.
-if [[ -f /usr/bin/chromium-browser ]]
-then
-        PROG=/usr/bin/chromium-browser
-else
-        PROG=/usr/bin/chromium
-fi
 
 unclutter &
 matchbox-window-manager &
-$PROG --kiosk --incognito --window-position=0,0 --window-size=1920,1080 http://pi_director/go/${MAC} &
+
+if [[ "$BROWSER" == "True" ]]
+then
+    #Sometimes chromium is unceremoniously killed and SingletonLock remains.  Remove it.
+    find ~/.config -name SingletonLock -delete >> /dev/null 2>&1
+
+    #If we've loaded a newer chromium on the machine, the executable name has changed.
+    if [[ -f /usr/bin/chromium-browser ]]
+    then
+        PROG=/usr/bin/chromium-browser
+    else
+        PROG=/usr/bin/chromium
+    fi
+    $PROG --kiosk --incognito --window-position=0,0 --window-size=1920,1080 http://${HOST}/go/${MAC} &
+else
+    $CMD
+fi
+
 ~/keydown.sh
 

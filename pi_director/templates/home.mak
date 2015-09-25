@@ -149,9 +149,11 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="modalURL" class="control-label col-xs-2">URL</label>
+					<label for="modalURL" class="control-label col-xs-2">URL/Command</label>
 					<div class="col-xs-10">
-						<input type="text" class="form-control" id="modalURL" placeholder="URL" />
+						<input type="radio" name="rdioCommand" value="1"/>URL
+						<input type="radio" name="rdioCommand" value="0"/>Custom Command
+						<input type="text" class="form-control" id="modalURL" placeholder="" />
 					</div>
 				</div>
 				<div class="form-group">
@@ -279,6 +281,12 @@ addLoadEvent(function() {
 				$("#modalMAC").val(formdata.uuid);
 				$("#modalDesc").val(formdata.description);
 				$("#modalURL").val(formdata.url);
+				if (formdata.browser == true) {
+					$('input:radio[name=rdioCommand]')[0].checked = true;
+				}
+				else {
+					$('input:radio[name=rdioCommand]')[1].checked = true;
+				};
 				$("#modalLandscape").prop('checked',formdata.landscape);
 				$("#modalMAC").prop('disabled',true);
 			}
@@ -293,11 +301,12 @@ addLoadEvent(function() {
 		var newDesc = $("#modalDesc").val();
 		var newURL = $("#modalURL").val();
 		var newLandscape = $("#modalLandscape").prop('checked');
+		var newCommandType = $("input:radio[name=rdioCommand]:checked").val();
 		$.ajax({
 			type: "POST",
 			cache: false,
 			url: '/ajax/PiUrl/'+modalMAC,
-			data: JSON.stringify({'url':newURL,'landscape':newLandscape,'description':newDesc}),
+			data: JSON.stringify({'url':newURL,'landscape':newLandscape,'description':newDesc,'browser':newCommandType}),
 			success: function(result) {
 				$("#editModal").modal('hide');
 				location.reload(true);

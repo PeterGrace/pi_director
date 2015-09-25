@@ -33,6 +33,7 @@ class RasPi(Base):
     ip = Column(Text)
     requested_commands = Column(Text)
     tags = relationship("Tags")
+    browser = Column(Boolean)
     logs = relationship("Logs")
 
     def get_dict(self):
