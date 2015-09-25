@@ -33,15 +33,16 @@ def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     NotSoSecret = 'CIeUz0RK8fjRq1wJSrID'
-    authn_policy = AuthTktAuthenticationPolicy(NotSoSecret, callback=groupfinder, hashalg='sha512')
+    authn_policy = AuthTktAuthenticationPolicy(NotSoSecret,
+                                               callback=groupfinder,
+                                               hashalg='sha512')
     authz_policy = ACLAuthorizationPolicy()
     session_factory = SignedCookieSessionFactory(NotSoSecret)
-
 
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
-    config = Configurator(settings=settings,root_factory=Root)
+    config = Configurator(settings=settings, root_factory=Root)
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
     config.include('velruse.providers.google_oauth2')
@@ -57,6 +58,7 @@ def main(global_config, **settings):
     config.add_route('logout', '/logout')
     config.add_route('redirectme', '/go/{uid}')
     config.add_route('provision', '/provision')
+    config.add_route('logs', '/logs/{uuid}')
     config.add_request_method(LookupUser, 'user', reify=True)
     config.scan()
     return config.make_wsgi_app()

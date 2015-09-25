@@ -15,12 +15,14 @@ from pi_director.models.models import (
     DBSession,
     RasPi,
     Tags,
-    Screenshot
+    Screenshot,
+    Logs
     )
 
 from pi_director.controllers.user_controls import make_an_admin
 from pi_director.controllers.controllers import get_pi_info
 from pi_director.controllers.controllers import get_pi_cmd_info
+from pi_director.controllers.controllers import get_log
 
 
 screenshot = Service(name='pi_screen', path='/api/v1/screen/{uid}',
@@ -40,13 +42,17 @@ get_cache = Service(name='get_cache', path='/api/v1/cache/{uid}',
 reqcommands = Service(name='pi_reqcmds', path='/api/v2/reqcmds/{uid}',
                       description="handle arbitary commands to be run on the pi")
 
-refresh = Service(name='pi_refresh', path ='/api/v1/refresh/{uid}',
-                      description="send a refresh command request to the pi")
+refresh = Service(name='pi_refresh', path='/api/v1/refresh/{uid}',
+                  description="send a refresh command request to the pi")
+
+pi_log = Service(name='pi_log', path='/api/v1/pi_log/{uid}',
+                 description="Sends Logs from pi to Server")
 
 
 tags = Service(name='pi_tags', path='/api/v1/tags/{uid}/{tag}')
 
 logger = logging.getLogger('api')
+
 
 @tags.delete(permission='admin')
 def view_api_delete_tag(request):
@@ -80,12 +86,13 @@ def view_api_refresh_get(request):
         return {'status': 'error'}
 
     try:
-        #If there are already records to be run, we'll start with them in the array already
+        # If there are already records to be run,
+        # we'll start with them in the array already
         cmd_data = json.loads(row.requested_commands)
     except (ValueError, TypeError):
         cmd_data=[]
         pass
-             
+
     cmd_data.append(refresh_cmd)
 
     row.requested_commands = json.dumps(cmd_data)
@@ -124,6 +131,31 @@ def view_api_screenshow_show(request):
                        '4154789C63FA0F0001050102CFA02ECD0000000049454E44AE426082'.decode('hex')
             ss.write(emptypng)
             return Response(content_type='image/png', content_length=len(ss.getvalue()), body=ss.getvalue())
+
+
+@pi_log.post(permission='anon')
+def view_api_log_save(request):
+    uid = request.matchdict['uid']
+    pi_log = request.POST['pi_log']
+    filename = request.POST['filename']
+    DBSession.query(Logs).filter(
+        Logs.uuid == uid).filter(
+        Logs.filename == filename).delete()
+
+    new_log = Logs()
+    new_log.filename = filename
+    new_log.uuid = uid
+    new_log.log = pi_log
+    DBSession.add(new_log)
+    DBSession.flush()
+
+
+@pi_log.get(permission='anon')
+def view_api_log_show(request):
+    uid = request.matchdict['uid']
+    filename = request.GET['filename']
+    log = get_log(uuid=uid, filename=filename)
+    return Response(content_type='text/plain', body=log.log)
 
 
 @ping.get(permission='anon')

@@ -33,6 +33,7 @@ class RasPi(Base):
     ip = Column(Text)
     requested_commands = Column(Text)
     tags = relationship("Tags")
+    logs = relationship("Logs")
 
     def get_dict(self):
         dict_ = {}
@@ -41,6 +42,7 @@ class RasPi(Base):
 
         dict_['lastseen'] = str(self.lastseen)
         return dict_
+
 
 class Tags(Base):
     __tablename__ = 'Tags'
@@ -55,3 +57,10 @@ class Screenshot(Base):
     uuid = Column(Text, primary_key=True)
     image = Column(Binary)
 
+
+class Logs(Base):
+    __tablename__ = 'Logs'
+    id = Column(Integer, primary_key=True)
+    filename = Column(Text)
+    log = Column(Text)
+    uuid = Column(Text, ForeignKey('PiUrl.uuid'))
