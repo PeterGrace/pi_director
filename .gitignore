@@ -2,4 +2,3 @@
 *.sqlite
 *.egg-info
 local/*
-development.ini
