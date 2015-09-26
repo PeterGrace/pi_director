@@ -11,7 +11,7 @@
 				<th>Screen</th>
 				<th>Description</th>
 				<th>URL</th>
-				<th>Orientation</th>
+				<th class="text-center">Orientation</th>
 				<th>Actions</th>
 			</tr>
 		</thead>
@@ -50,11 +50,19 @@
 		% endfor
 				</td>
 		% endif
-		
-		%if pi.landscape == True:
-				<td class="text-center"><span class="glyphicon glyphicon-option-horizontal"></span></td>
-		%else:
-				<td class="text-center"><span class="glyphicon glyphicon-option-vertical"></span></td>
+
+		%if pi.orientation == 0:
+				<td class="text-center"><span style="font-size:4em;" class="glyphicon glyphicon-triangle-top" 
+				title=${pi.orientation}°></span></td>
+		% elif pi.orientation == 90:
+				<td class="text-center"><span style="font-size:4em;" class="glyphicon glyphicon-triangle-left"
+				title=${pi.orientation}°></span></td>
+		% elif pi.orientation == 180:		
+				<td class="text-center"><span style="font-size:4em;" class="glyphicon glyphicon-triangle-bottom"
+				title=${pi.orientation}°></span></td>
+		% elif pi.orientation == 270:		
+				<td class="text-center"><span style="font-size:4em;" class="glyphicon glyphicon-triangle-right"
+				title=${pi.orientation}°></span></td>
 		%endif
 				<td>
 					<div class="dropdown">
@@ -157,10 +165,21 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<div class="col-xs-offset-2 col-xs-10">
-						<label>
-							<input type="checkbox" id="modalLandscape" /> Landscape Mode
-						</label>
+					<label for="modalOrient" class="control-label col-xs-2">Orientation:</label>
+					<div class="col-xs-10">
+    					<select id="modalOrient" class="form-control">
+  						<option value="orientation"><span class="caret"></option>
+  						<option value=0>0</option>
+  						<option value=90>90</option>
+  						<option value=180>180</option>
+  						<option value=270>270</option>
+						</select>
+    					<ul class="dropdown-menu" role="menu">
+        				<li><a href="#" data-value="0">0</a></li>
+        				<li><a href="#" data-value="90">90</a></li>
+        				<li><a href="#" data-value="180">180</a></li>
+        				<li><a href="#" data-value="270">270</a></li>
+    					</ul>
 					</div>
 				</div>
 			</form>
@@ -287,7 +306,7 @@ addLoadEvent(function() {
 				else {
 					$('input:radio[name=rdioCommand]')[1].checked = true;
 				};
-				$("#modalLandscape").prop('checked',formdata.landscape);
+				$("#modalOrient").val(formdata.orientation);
 				$("#modalMAC").prop('disabled',true);
 			}
 		});
@@ -300,13 +319,13 @@ addLoadEvent(function() {
 		var modalMAC = $("#modalMAC").val();
 		var newDesc = $("#modalDesc").val();
 		var newURL = $("#modalURL").val();
-		var newLandscape = $("#modalLandscape").prop('checked');
+		var newOrient = $("#modalOrient").val();
 		var newCommandType = $("input:radio[name=rdioCommand]:checked").val();
 		$.ajax({
 			type: "POST",
 			cache: false,
 			url: '/ajax/PiUrl/'+modalMAC,
-			data: JSON.stringify({'url':newURL,'landscape':newLandscape,'description':newDesc,'browser':newCommandType}),
+			data: JSON.stringify({'url':newURL,'orientation':newOrient,'description':newDesc,'browser':newCommandType}),
 			success: function(result) {
 				$("#editModal").modal('hide');
 				location.reload(true);
