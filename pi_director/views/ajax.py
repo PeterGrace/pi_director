@@ -62,7 +62,7 @@ def view_json_set_pi(request):
         row.uuid = uid
     row.url = response['url']
     row.description = response['description']
-    row.landscape = response['landscape']
+    row.orientation = response['orientation']
     row.browser = response['browser']
     DBSession.add(row)
     DBSession.flush()
@@ -70,7 +70,7 @@ def view_json_set_pi(request):
         'uuid': row.uuid,
         'url': row.url,
         'description': row.description,
-        'landscape': row.landscape,
+        'orientation': row.orientation,
         'browser': row.browser
     }
     return rowdict

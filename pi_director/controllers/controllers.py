@@ -76,6 +76,7 @@ def get_pi_info(uid):
         row.landscape = True
         row.lastseen = datetime.now()
         row.description = ""
+        row.orientation = 0
         DBSession.add(row)
         DBSession.flush()
     else:
@@ -87,7 +88,7 @@ def get_pi_info(uid):
             pass
 
     rowdict = row.get_dict()
-    rowdict['tags']=tags
+    rowdict['tags'] = tags
     return rowdict
 
 

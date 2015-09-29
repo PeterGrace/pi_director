@@ -60,6 +60,7 @@ def view_api_delete_tag(request):
     tag=request.matchdict['tag']
     DBSession.query(Tags).filter(and_(Tags.uuid == uid,Tags.tag == tag)).delete()
 
+
 @tags.post(permission='admin')
 def view_api_post_new_tag(request):
     uid=request.matchdict['uid']
@@ -170,6 +171,7 @@ def view_api_ping(request):
         row.uuid = uid
         row.url = "http://www.stackexchange.com"
         row.landscape = True
+        row.orientation = 0
         row.description = ""
 
     row.lastseen = now
@@ -190,6 +192,7 @@ def view_api_ping_v2(request):
         row.uuid = uid
         row.url = "http://www.stackexchange.com"
         row.landscape = True
+        row.orientation = 0
         row.description = ""
 
     row.lastseen = now
