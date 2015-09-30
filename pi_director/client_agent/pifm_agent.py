@@ -92,6 +92,14 @@ try:
     else:
         logging.info("URL same as last time, nothing to see here")
 
+    # If this is a pi that has been upgraded to a newer pifm_agent, we need to
+    # sunset the landscape out of the cache and just use orientation.
+    if ('orientation' in piurl.keys()) and ('orientation' not in cache.keys()):
+       logging.info("Upgrading pi from landscape to orientation mode")
+       del cache['landscape']
+       cache['orientation'] = piurl['orientation']
+
+
     # Set Orientation
     if 'orientation' not in cache.keys():
 
