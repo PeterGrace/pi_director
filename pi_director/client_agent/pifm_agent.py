@@ -42,7 +42,7 @@ def check_upgrade():
             with open('/home/pi/pifm_agent.py', 'w') as f:
                 f.write(str(server_file))
             sed('-i',
-                "s#pi_director#{myhost}#g".format(myhost=PIFM_HOST),
+                "s#http://pi_director#{myhost}#g".format(myhost=PIFM_HOST),
                 '/home/pi/pifm_agent.py'
                 )
             sys.exit(0)
