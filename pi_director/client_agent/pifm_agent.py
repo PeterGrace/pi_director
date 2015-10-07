@@ -11,6 +11,7 @@ import atexit
 from sh import sudo
 
 CACHE_FILE = "/home/pi/cache.pickle"
+LOG_CACHE_FILE = "/dev/shm/logcache.pickle"
 PIFM_HOST = "http://pi_director"
 LOCK_DIR = "/dev/shm/pifm.lock"
 should_reboot = False
@@ -19,6 +20,21 @@ logging.basicConfig(filename='/dev/shm/pi_director.log',
                     level=logging.INFO,)
 # http://stackoverflow.com/questions/13733552/
 # logging.getLogger().addHandler(logging.StreamHandler())
+
+
+def _handle_exception(e, section=None):
+    global should_reboot, cache
+    if section is not None:
+        logging.info("Exception found in {section}: {ex}".format(
+                                                                section=section,
+                                                                ex=e.message
+                                                                ))
+    else:
+        logging.info("Exception found: {ex}".format(ex=e.message))
+    cache['url'] = piurl['url']
+    cache['landscape'] = piurl['landscape']
+    sudo('service', 'lightdm', 'restart')
+    should_reboot = True
 
 
 def release_lock():
@@ -55,8 +71,10 @@ def getmac(interface):
 # lock it up -- long-running arbitrary commands could hose us
 acquire_lock()
 
-# Initialize cache
+# Initialize caches
 original_cache = {}
+original_log_cache = {}
+
 if os.path.exists(CACHE_FILE):
     with open(CACHE_FILE, "rb") as f:
         cache = pickle.load(f)
@@ -64,6 +82,15 @@ else:
     cache = {}
 
 original_cache = cache.copy()
+
+if os.path.exists(LOG_CACHE_FILE):
+    with open(LOG_CACHE_FILE, "rb") as f:
+        log_cache = pickle.load(f)
+else:
+    log_cache = {}
+
+original_log_cache = log_cache.copy()
+
 # Get mac address
 mac = getmac('eth0')
 ip = get_default_ip()
@@ -83,7 +110,6 @@ r_newurl = requests.get(PIFM_HOST+'/api/v1/cache/{mac}'.format(mac=mac))
 piurl = json.loads(r_newurl.text)
 
 try:
-
     # Set URL
     if piurl['url'] != cache['url']:
         logging.info("New URL requested, restarting lightdm")
@@ -91,15 +117,20 @@ try:
         cache['url'] = piurl['url']
     else:
         logging.info("URL same as last time, nothing to see here")
+except Exception as e:
+    _handle_exception(e, "url-compare")
 
+try:
     # If this is a pi that has been upgraded to a newer pifm_agent, we need to
     # sunset the landscape out of the cache and just use orientation.
     if ('orientation' in piurl.keys()) and ('orientation' not in cache.keys()):
-       logging.info("Upgrading pi from landscape to orientation mode")
-       del cache['landscape']
-       cache['orientation'] = piurl['orientation']
+        logging.info("Upgrading pi from landscape to orientation mode")
+        del cache['landscape']
+        cache['orientation'] = piurl['orientation']
+except Exception as e:
+    _handle_exception(e, "check-landscape-deprecated")
 
-
+try:
     # Set Orientation
     if 'orientation' not in cache.keys():
 
@@ -149,7 +180,10 @@ try:
                 should_reboot = True
         else:
             should_reboot = False
+except Exception as e:
+    _handle_exception(e, "orientation-logic")
 
+try:
     # pifm server will unset the command(s) after results are sent
     if piurl['requested_commands']:
         cmd_url = PIFM_HOST+'/api/v2/reqcmds/{mac}'.format(mac=mac)
@@ -184,16 +218,12 @@ try:
         _reqcmd_resp(**_reqcmd())
         del piurl['requested_commands']    # never cache this
 
-except Exception, e:
-    logging.info('Exception found: '+str(e))
-    cache['url'] = piurl['url']
-    cache['landscape'] = piurl['landscape']
-    sudo('service', 'lightdm', 'restart')
-    should_reboot = True
+except Exception as e:
+    _handle_exception(e, "requested-commands")
 
 
 # Push logs to Server
-# Compare cache to current
+# Compare log_cache to current
 logdir = '/var/log/'
 logfiles = ['/dev/shm/pi_director.log', logdir+'daemon.log',
             logdir+'debug', logdir+'messages',
@@ -206,11 +236,11 @@ for logfile in logfiles:
     if os.path.isfile(logfile):
         command = ['tail', '-c', log_offset, logfile]
         log_tail = subprocess.check_output(command)
-        if logfile not in cache.keys():
-            cache[logfile] = log_tail
+        if logfile not in log_cache.keys():
+            log_cache[logfile] = log_tail
             post_needed = True
-        if log_tail != cache[logfile]:
-            cache[logfile] = log_tail
+        if log_tail != log_cache[logfile]:
+            log_cache[logfile] = log_tail
             post_needed = True
         else:
             logging.info("No change detected in "+str(logfile))
@@ -223,6 +253,10 @@ for logfile in logfiles:
 # Send if changed
 
 '''Commit cache to disk'''
+if cmp(log_cache, original_log_cache) != False:
+    with open(LOG_CACHE_FILE, "wb") as f:
+        logging.info("Writing log cache pickle")
+        pickle.dump(log_cache, f)
 if cmp(cache, original_cache) != False:
     with open(CACHE_FILE, "wb") as f:
         logging.info("Writing back changes to pickle")
@@ -233,4 +267,4 @@ else:
 if should_reboot:
     sudo('reboot')
 
-# vim: set expandtab tabstop=4 shiftwidth=4 autoindent smartindent: 
+# vim: set expandtab tabstop=4 shiftwidth=4 autoindent smartindent:
