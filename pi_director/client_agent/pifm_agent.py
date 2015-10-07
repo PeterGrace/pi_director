@@ -8,7 +8,13 @@ import json
 import logging
 import socket
 import atexit
-from sh import sudo
+from sh import (
+    sudo,
+    curl,
+    md5sum,
+    grep,
+    sed
+)
 
 CACHE_FILE = "/home/pi/cache.pickle"
 LOG_CACHE_FILE = "/dev/shm/logcache.pickle"
@@ -20,6 +26,26 @@ logging.basicConfig(filename='/dev/shm/pi_director.log',
                     level=logging.INFO,)
 # http://stackoverflow.com/questions/13733552/
 # logging.getLogger().addHandler(logging.StreamHandler())
+
+
+def check_upgrade():
+        server_file = curl(PIFM_HOST + '/client_agent/pifm_agent.py')
+        server_sum = md5sum(grep(server_file, '-v', 'PIFM_HOST='))
+        local_sum = md5sum(grep('-v', 'PIFM_HOST=', '/home/pi/pifm_agent.py'))
+        if server_sum != local_sum:
+            logging.info(
+                "server: {server}, local: {local}, should update.".format(
+                    server=server_sum,
+                    local=local_sum
+                )
+            )
+            with open('/home/pi/pifm_agent.py', 'w') as f:
+                f.write(str(server_file))
+            sed('-i',
+                "s#pi_director#{myhost}#g".format(myhost=PIFM_HOST),
+                '/home/pi/pifm_agent.py'
+                )
+            sys.exit(0)
 
 
 def _handle_exception(e, section=None):
@@ -70,6 +96,8 @@ def getmac(interface):
 
 # lock it up -- long-running arbitrary commands could hose us
 acquire_lock()
+
+check_upgrade()
 
 # Initialize caches
 original_cache = {}
