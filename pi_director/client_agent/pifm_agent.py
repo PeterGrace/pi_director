@@ -29,8 +29,8 @@ logging.basicConfig(level=logging.INFO)
 
 def check_upgrade():
         server_file = curl(PIFM_HOST + '/client_agent/pifm_agent.py')
-        server_sum = md5sum(grep(server_file, '-v', 'PIFM_HOST='))
-        local_sum = md5sum(grep('-v', 'PIFM_HOST=', '/home/pi/pifm_agent.py'))
+        server_sum = md5sum(grep(server_file, '-v', '^PIFM_HOST'))
+        local_sum = md5sum(grep('-v', '^PIFM_HOST', '/home/pi/pifm_agent.py'))
         if server_sum != local_sum:
             logging.info(
                 "server: {server}, local: {local}, should update.".format(
