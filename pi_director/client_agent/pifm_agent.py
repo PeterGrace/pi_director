@@ -22,8 +22,7 @@ PIFM_HOST = "http://pi_director"
 LOCK_DIR = "/dev/shm/pifm.lock"
 should_reboot = False
 
-logging.basicConfig(filename='/dev/shm/pi_director.log',
-                    level=logging.INFO,)
+logging.basicConfig(level=logging.INFO)
 # http://stackoverflow.com/questions/13733552/
 # logging.getLogger().addHandler(logging.StreamHandler())
 
