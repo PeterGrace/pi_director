@@ -1,3 +1,4 @@
+import shlex
 from pi_director.models.models import (
     DBSession,
     RasPi,
