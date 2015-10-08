@@ -8,19 +8,23 @@ import json
 import logging
 import socket
 import atexit
+import shutil
 from sh import (
     sudo,
     curl,
     md5sum,
     grep,
     sed,
-    awk
+    awk,
+    python
 )
 
 CACHE_FILE = "/home/pi/cache.pickle"
 LOG_CACHE_FILE = "/dev/shm/logcache.pickle"
 PIFM_HOST = "http://pi_director"
 LOCK_DIR = "/dev/shm/pifm.lock"
+TMP_SCRIPT = "/dev/shm/pifm_agent.tmp"
+OUR_SCRIPT = "/home/pi/pifm_agent.py"
 should_reboot = False
 
 logging.basicConfig(level=logging.INFO)
@@ -30,8 +34,18 @@ logging.basicConfig(level=logging.INFO)
 
 def check_upgrade():
         server_file = curl(PIFM_HOST + '/client_agent/pifm_agent.py')
-        server_sum = awk(md5sum(grep(server_file, '-v', '^PIFM_HOST')), '{print $1}')
-        local_sum = awk(md5sum(grep('-v', '^PIFM_HOST', '/home/pi/pifm_agent.py')), '{print $1}')
+        server_sum = awk(
+                        md5sum(
+                            grep(server_file, '-v', '^PIFM_HOST')
+                        ), '{print $1}'
+        )
+
+        local_sum = awk(
+                        md5sum(
+                            grep('-v', '^PIFM_HOST', OUR_SCRIPT)
+                        ), '{print $1}'
+        )
+
         if str(server_sum) != str(local_sum):
             logging.info(
                 "server: {server}, local: {local}, should update.".format(
@@ -39,13 +53,17 @@ def check_upgrade():
                     local=local_sum
                 )
             )
-            with open('/home/pi/pifm_agent.py', 'w') as f:
+            with open(TMP_SCRIPT, 'w') as f:
                 f.write(str(server_file))
             sed('-i',
                 "0,/def/ s#http://pi_director#{myhost}#".format(myhost=PIFM_HOST),
-                '/home/pi/pifm_agent.py'
+                OUR_SCRIPT
                 )
-            sys.exit(0)
+            status = python('-m', 'py_compile', TMP_SCRIPT)
+            if (status.exit_code == 0):
+                shutil.copy(TMP_SCRIPT, OUR_SCRIPT)
+                os.chmod(OUR_SCRIPT, 0755)
+                sys.exit(0)
 
 
 def _handle_exception(e, section=None):
