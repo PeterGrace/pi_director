@@ -1,21 +1,22 @@
-import shlex
-import logging
 from pi_director.models.models import (
     DBSession,
     RasPi,
     Tags,
     Logs
     )
-from sqlalchemy import desc, and_
+from sqlalchemy import desc
+
+from datetime import datetime
+
 
 
 def get_pis():
-    PiList = DBSession.query(RasPi).filter(RasPi.uuid!="default").order_by(desc(RasPi.lastseen)).all()
+    PiList = DBSession.query(RasPi).filter(RasPi.uuid != "default").order_by(desc(RasPi.lastseen)).all()
     return PiList
 
 
 def get_logs(uuid):
-    logs = DBSession.query(Logs).filter(Logs.uuid==uuid).all()
+    logs = DBSession.query(Logs).filter(Logs.uuid == uuid).all()
     return logs
 
 
@@ -43,14 +44,13 @@ def get_tagged_pis(tags):
 
     if (len(taglist) > 1):
         query_str = """
-    SELECT t1.uuid,count(*) AS ct
-      FROM Tags t1
-      JOIN Tags t2 ON t1.tag!=t2.tag AND t1.uuid==t2.uuid
-     WHERE 1
-       AND t1.tag IN ({taglist})
-       AND t2.tag IN ({taglist})
-  GROUP BY t1.uuid
-    HAVING ct >= {args}
+        SELECT t1.uuid,count(*)
+        FROM "Tags" t1
+        JOIN "Tags" t2 ON t1.tag!=t2.tag AND t1.uuid=t2.uuid
+        WHERE t1.tag IN ({taglist})
+        AND t2.tag IN ({taglist})
+        GROUP BY t1.uuid
+        HAVING count(*) >= {args};
         """.format(taglist=taglist_str, args=len(taglist))
 
         result = DBSession.get_bind().execute(query_str)
@@ -68,7 +68,7 @@ def get_tagged_pis(tags):
 
 def get_pi_info(uid):
     tags = []
-    row = DBSession.query(RasPi).filter(RasPi.uuid==uid).first()
+    row = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
     if row is None:
         row = RasPi()
         row.uuid = uid
@@ -81,7 +81,7 @@ def get_pi_info(uid):
         DBSession.flush()
     else:
         try:
-            tagset = DBSession.query(Tags).filter(Tags.uuid==uid).all()
+            tagset = DBSession.query(Tags).filter(Tags.uuid == uid).all()
             for tag in tagset:
                 tags.append(tag.tag)
         except Exception:
@@ -99,12 +99,12 @@ def get_pi_cmd_info(uid):
         return []
     else:
         try:
-            tagset = DBSession.query(Tags).filter(Tags.uuid==uid).all()
+            tagset = DBSession.query(Tags).filter(Tags.uuid == uid).all()
             for tag in tagset:
                 tags.append(tag.tag)
         except Exception:
             pass
 
     rowdict = row.get_dict()
-    rowdict['tags']=tags
+    rowdict['tags'] = tags
     return rowdict
