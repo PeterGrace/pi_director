@@ -5,11 +5,6 @@ Introduction
 ------------
 Raspberry Pis are wonderful tools to use for digital signage.  They're inexpensive, they can be connected to commodity TVs and have reasonably good web rendering performance for most signage applications.  This tool allows one to deploy a fleet of Raspberry Pis that can have centralized management, where one can specify which URL each Pi should display.
 
-Known issues
-------------
-- No issues so far -- report them in github and we'll take a look!
-
-
 Getting Started
 ---------------
 
