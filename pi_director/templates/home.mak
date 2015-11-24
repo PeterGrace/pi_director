@@ -24,6 +24,9 @@
 			timediff = timedelta(1979,12,31,23,59,59)
 		else:
 			timediff = datetime.now() - pi.lastseen
+	
+		current_url = request.url	
+			
 %>
 		% if pi.ip == None:
 				<td>${pi.uuid}<br>
@@ -46,7 +49,7 @@
 		% else:
 				<td>${pi.url}<br/>
 		% for tag in pi.tags:
-					<a href="/tagged/${tag.tag}" class="btn btn-xs btn-primary">${tag.tag}</a>
+					<a href="${current_url};${tag.tag}" class="btn btn-xs btn-primary">${tag.tag}</a>
 		% endfor
 				</td>
 		% endif
