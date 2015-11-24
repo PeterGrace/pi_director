@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+sleep 5
 MAC=$(ip link show eth0 | grep ether|awk '{print $2}')
 BASEURL="http://pi_director"
 BROWSER=$(curl ${BASEURL}/api/v1/cache/${MAC} 2>/dev/null|python -c 'import sys,json; print json.load(sys.stdin)["browser"]')
@@ -10,20 +11,14 @@ matchbox-window-manager &
 
 if [[ "$BROWSER" == "True" ]]
 then
-    #Sometimes chromium is unceremoniously killed and SingletonLock remains.  Remove it.
-    find ~/.config -name SingletonLock -delete >> /dev/null 2>&1
+    #if iceweasel is killed, it sometimes thinks it should remember crashed tabs.  It shouldn't.
+    rm -rf ~/.mozilla/firefox >> /dev/null 2>&1
 
-    #If we've loaded a newer chromium on the machine, the executable name has changed.
-    if [[ -f /usr/bin/chromium-browser ]]
-    then
-        PROG=/usr/bin/chromium-browser
-    else
-        PROG=/usr/bin/chromium
-    fi
-    $PROG --kiosk --incognito --window-position=0,0 --window-size=1920,1080 ${BASEURL}/go/${MAC} &
+    iceweasel ${BASEURL}/go/${MAC} &
+    sleep 10
+    xdotool key F11
 else
     $CMD
 fi
 
 ~/keydown.sh
-
