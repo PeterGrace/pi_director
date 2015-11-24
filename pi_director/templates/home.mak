@@ -52,7 +52,7 @@
 			% if "tagged" in current_url:
 					<a href="${current_url};${tag.tag}" class="btn btn-xs btn-primary">${tag.tag}</a>
 			% else:		
-					<a href="${current_url}/tagged/${tag.tag}" class="btn btn-xs btn-primary">${tag.tag}</a>
+					<a href="${current_url}tagged/${tag.tag}" class="btn btn-xs btn-primary">${tag.tag}</a>
 			% endif		
 
 		% endfor
