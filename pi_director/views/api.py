@@ -118,7 +118,7 @@ def view_api_screenshot_save(request):
     DBSession.flush()
 
 
-@screenshot.get(permission='admin')
+@screenshot.get(permission='anon')
 def view_api_screenshow_show(request):
     uid = request.matchdict['uid']
     shot = DBSession.query(Screenshot).filter(Screenshot.uuid == uid).first()
