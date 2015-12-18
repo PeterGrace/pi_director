@@ -36,7 +36,7 @@ fi
 ##################################
 
 apt-get -y update
-apt-get -y install unclutter xdotool matchbox-window-manager iceweasel python-pip imagemagick
+apt-get -y install unclutter xdotool matchbox-window-manager iceweasel python-pip imagemagick git lightdm
 wget ${BASEURL}/client_agent/xsession -O .xsession
 wget ${BASEURL}/client_agent/keydown.sh -O keydown.sh
 wget ${BASEURL}/client_agent/refresh.sh -O refresh.sh
