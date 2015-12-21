@@ -61,6 +61,6 @@ su pi -c 'echo -e "* * * * *\t/home/pi/pifm_agent.py >/dev/null 2>&1" | crontab'
 echo "display_rotate=0" >> /boot/config.txt
 
 echo "If everything worked properly, this pi automatically reboot soon."
-sed -i "s#http://pi_director#${BASEURL}#" .xsession pifm_agent.py
+sed -i "0,#def# s#http://pi_director#${BASEURL}#" .xsession pifm_agent.py
 
 
