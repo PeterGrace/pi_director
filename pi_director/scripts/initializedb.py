@@ -7,7 +7,8 @@ from sqlalchemy import engine_from_config
 from pyramid.paster import (
     get_appsettings,
     setup_logging,
-    )
+)
+from datetime import datetime
 
 from pyramid.scripts.common import parse_vars
 
@@ -15,7 +16,11 @@ from pi_director.models.models import (
     DBSession,
     RasPi,
     Base,
-    )
+    Tags
+)
+from pi_director.models.UserModel import (
+    UserModel
+)
 
 
 def usage(argv):
@@ -36,5 +41,23 @@ def main(argv=sys.argv):
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
     with transaction.manager:
-        model = RasPi(uuid='default', url="http://www.facebook.com")
+        model = RasPi()
+        model.uuid = '11:22:33:44:55:66'
+        model.description = "Testing Pi"
+        model.url = "http://www.facebook.com"
+        model.orientation = 0
+        model.browser = True
+        model.lastseen = datetime.now()
         DBSession.add(model)
+
+        tag = Tags()
+        tag.uuid = '11:22:33:44:55:66'
+        tag.tag = 'test'
+        DBSession.add(tag)
+
+        User = UserModel()
+        User.email = 'pete@stackoverflow.com'
+        User.AccessLevel = 2
+        DBSession.add(User)
+
+    DBSession.flush()
