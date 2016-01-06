@@ -17,7 +17,7 @@ from pi_director.models.models import (
     Tags,
     Screenshot,
     Logs
-    )
+)
 
 from pi_director.controllers.user_controls import make_an_admin
 from pi_director.controllers.controllers import get_pi_info
@@ -173,6 +173,7 @@ def view_api_ping(request):
         row.landscape = True
         row.orientation = 0
         row.description = ""
+        row.browser = True
 
     row.lastseen = now
     DBSession.add(row)
@@ -194,6 +195,7 @@ def view_api_ping_v2(request):
         row.landscape = True
         row.orientation = 0
         row.description = ""
+        row.browser = True
 
     row.lastseen = now
     row.ip = ip

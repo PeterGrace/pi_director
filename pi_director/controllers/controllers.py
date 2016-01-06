@@ -4,11 +4,10 @@ from pi_director.models.models import (
     RasPi,
     Tags,
     Logs
-    )
+)
 from sqlalchemy import desc
 
 from datetime import datetime
-
 
 
 def get_pis():
@@ -23,8 +22,8 @@ def get_logs(uuid):
 
 def get_log(uuid, filename):
     log = DBSession.query(Logs).filter(
-          Logs.uuid == uuid).filter(
-          Logs.filename == filename).first()
+        Logs.uuid == uuid).filter(
+        Logs.filename == filename).first()
 
     return log
 
@@ -78,6 +77,7 @@ def get_pi_info(uid):
         row.lastseen = datetime.now()
         row.description = ""
         row.orientation = 0
+        row.browser = True
         DBSession.add(row)
         DBSession.flush()
     else:

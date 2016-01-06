@@ -103,6 +103,7 @@ def redirect_me(request):
             row.uuid = uid
             row.url = "http://www.stackexchange.com"
             row.landscape = True
+            row.browser = True
             DBSession.add(row)
             DBSession.flush()
             logging.warn("UID {uid} NOT FOUND. ADDED TO TABLE WITH DEFAULT URL".format(uid=uid))
