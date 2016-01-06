@@ -3,6 +3,7 @@ from pyramid.view import view_config, forbidden_view_config
 from pyramid.security import authenticated_userid
 from pyramid.renderers import render_to_response
 from velruse import login_url
+from datetime import datetime
 import re
 
 import pyramid.httpexceptions as exc
@@ -93,7 +94,13 @@ def view_tagged(request):
 def view_wall(request):
     tags = request.matchdict['tags']
     tagged_pis = get_tagged_pis(tags)
-    return {'pis': tagged_pis}
+    show_list = []
+    for pi in tagged_pis:
+        timediff = datetime.now() - pi.lastseen
+        if timediff <= 432000:
+            ''' pi was seen in the last 5 days, so display '''
+            show_list.append(pi)
+    return {'pis': show_list}
 
 
 @view_config(route_name='redirectme')
