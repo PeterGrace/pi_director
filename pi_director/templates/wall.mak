@@ -5,7 +5,9 @@
 	<div class="container">
 		<div class="row">
 
+			<% counter = 0 %>
 			%for pi in pis:
+			<% counter += 1 %>
 			<div class="col-lg-3 col-md-4 col-xs-6 thumb">
 				<div class="icon">
 					<div class="thumbnail">
@@ -23,16 +25,29 @@
 					</div>
 				</div>	
 			</div>	
-			%endfor
+			%if (counter % 4) == 0:
+				<div class="clearfix visible-lg-block"></div>
+			%endif
 
-			<span class="btn btn-xs btn-danger">The following pis are offline:
-			%for pi in offline:
-				${pi.description}&nbsp;
+			%if (counter % 3) == 0:
+				<div class="clearfix visible-md-block"></div>
+			%endif
+
+			%if (counter % 2) == 0:
+				<div class="clearfix visible-xs-block"></div>	
+			%endif
+
 			%endfor
-			</span>
 
 		</div>
 	</div>
+
+	<span class="btn btn-xs btn-danger">The following pis are offline:
+	%for pi in offline:
+		${pi.description}&nbsp;
+	%endfor
+	</span>
+
 %endif	
 
 </%block>
