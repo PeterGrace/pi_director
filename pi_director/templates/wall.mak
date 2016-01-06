@@ -51,3 +51,9 @@
 %endif	
 
 </%block>
+
+<%block name="ScriptContent">
+<script type="text/javascript">
+setInterval(function() {location.reload()},30000);
+</script>
+</%block>
