@@ -34,9 +34,9 @@
 				<td>${pi.uuid}<br>(${pi.ip})<br>
 		%endif
 		% if (timediff.total_seconds() > 300):
-				<a href='logs/${pi.uuid}'><button class="pull-right btn btn-xs btn-danger" title="Last seen ${int(timediff.total_seconds())} seconds ago">OFFLINE</button></td></a>
+				<a href='/logs/${pi.uuid}'><button class="pull-right btn btn-xs btn-danger" title="Last seen ${int(timediff.total_seconds())} seconds ago">OFFLINE</button></td></a>
 		% elif (timediff.total_seconds() > 70):
-				<a href='logs/${pi.uuid}'><button class="pull-right btn btn-xs btn-warning" title="Last seen ${int(timediff.total_seconds())} seconds ago">LAGGED</button></td></a>
+				<a href='/logs/${pi.uuid}'><button class="pull-right btn btn-xs btn-warning" title="Last seen ${int(timediff.total_seconds())} seconds ago">LAGGED</button></td></a>
 		% else:
 				<a href='logs/${pi.uuid}'><button class="pull-right btn btn-xs btn-info" title="Last seen ${int(timediff.total_seconds())} seconds ago">OK</button></td></a>
 		% endif
