@@ -15,10 +15,14 @@
 						<a class="thumbnail" href="#">
 							<img class="img-responsive" src="${request.resource_url(request.context,'api/v1/screen/'+pi.uuid)}" alt="${pi.uuid}">
 						</a>
-					</div>
 					<div class="caption">
 						<h3>${pi.uuid}</h3>
 						<p>${pi.description}</p>
+						%for tag in pi.tags:
+                    		<span class="btn btn-xs btn-primary">${tag.tag}</span>
+						%endfor
+
+					</div>
 					</div>
 				</div>	
 			</div>	
