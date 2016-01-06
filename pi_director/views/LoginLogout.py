@@ -36,10 +36,7 @@ def login_complete_view(request):
     DBSession.add(User)
     DBSession.flush()
 
-  if hasattr(request.session,'goingto'):
-    loc = request.session['goingto']
-  else:
-    loc = request.route_url('home', _query=(('next', request.path),))
+  loc = request.route_url('home', _query=(('next', request.path),))
 
   headers = remember(request, User.email)
   return HTTPFound(location=loc, headers=headers)
