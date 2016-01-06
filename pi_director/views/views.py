@@ -90,7 +90,7 @@ def view_tagged(request):
     return {'pis': tagged_pis, 'tags': tags}
 
 
-@view_config(route_name='wall', renderer="pi_director:templates/wall.mak", permission="anon")
+@view_config(route_name='wall', renderer="pi_director:templates/wall.mak", permission="user")
 def view_wall(request):
     tags = request.matchdict['tags']
     tagged_pis = get_tagged_pis(tags)
