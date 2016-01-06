@@ -1,26 +1,21 @@
-from pyramid.response import Response
-from pyramid.view import view_config
 from cornice import Service
-import pyramid.httpexceptions as exc
 import logging
-import sqlalchemy.exc
-import pdb
 import operator
 import json
-from datetime import datetime
+from sqlalchemy import and_
 
 from pi_director.models.models import (
     DBSession,
     RasPi,
     Tags
-    )
+)
 
 from pi_director.controllers.controllers import get_pi_info
 
 from pi_director.controllers.user_controls import (
     authorize_user,
     delete_user
-    )
+)
 
 
 editMAC = Service(name='PiUrl', path='/ajax/PiUrl/{uid}',
@@ -47,6 +42,9 @@ def view_json_get_pi(request):
 @editMAC.delete(permission='admin')
 def view_json_delete_pi(request):
     uid = request.matchdict['uid']
+    pi = DBSession.query(RasPi).filter(RasPi.uuid == uid).first()
+    for tag in pi.tags:
+        DBSession.query(Tags).filter(and_(Tags.uuid == uid, Tags.tag == tag.tag)).delete()
     DBSession.query(RasPi).filter(RasPi.uuid == uid).delete()
 
 
@@ -151,4 +149,3 @@ def view_ajax_delete_user(request):
     email = request.matchdict['email']
     delete_user(email)
     return '{"status":"OK"}'
-
