@@ -97,7 +97,7 @@ def view_wall(request):
     show_list = []
     for pi in tagged_pis:
         timediff = datetime.now() - pi.lastseen
-        if timediff <= 432000:
+        if timediff.total_seconds() <= 432000:
             ''' pi was seen in the last 5 days, so display '''
             show_list.append(pi)
     return {'pis': show_list}
