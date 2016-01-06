@@ -43,9 +43,9 @@
 	<span class="alert alert-warning">The following pis are offline:
 	%for pi in offline:
 		%if pi.description == "":
-			${pi.uuid},&nbsp;
+			${pi.uuid},
 		%else:	
-			${pi.description},&nbsp;
+			${pi.description},
 		%endif	
 	%endfor
 	</span>
