@@ -2,7 +2,6 @@
 <%block name="BlockContent">
 
 %if pis != None:
-	<div class="container">
 		<div class="row">
 
 			<% counter = 0 %>
@@ -40,11 +39,14 @@
 			%endfor
 
 		</div>
-	</div>
 
-	<span class="btn btn-xs btn-danger">The following pis are offline:
+	<span class="alert alert-warning">The following pis are offline:
 	%for pi in offline:
-		${pi.description}&nbsp;
+		%if pi.description == "":
+			${pi.uuid},&nbsp;
+		%else:	
+			${pi.description},&nbsp;
+		%endif	
 	%endfor
 	</span>
 
