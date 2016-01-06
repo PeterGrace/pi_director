@@ -42,6 +42,7 @@ wget ${BASEURL}/client_agent/keydown.sh -O keydown.sh
 wget ${BASEURL}/client_agent/refresh.sh -O refresh.sh
 wget ${BASEURL}/client_agent/xdokey.sh -O xdokey.sh
 wget ${BASEURL}/client_agent/frozen_screen_detect.sh -O frozen_screen_detect.sh
+wget ${BASEURL}/client_agent/check_fullscreen.py -O check_fullscreen.py
 wget ${BASEURL}/client_agent/pifm_agent.py -O pifm_agent.py
 
 chown pi.pi -R ~pi/.xsession ~pi/pifm_agent.py ~pi/keydown.sh ~pi/refresh.sh ~pi/frozen_screen_detect.sh
@@ -57,10 +58,12 @@ cd /home/pi
 pip install requests sh
 chown pi:pi -R *
 
-su pi -c 'echo -e "* * * * *\t/home/pi/pifm_agent.py >/dev/null 2>&1" | crontab'
+echo -e "* * * * *\t/home/pi/pifm_agent.py >/dev/null 2>&1"  >> /dev/shm/crontab.tmp
+echo -e "* * * * *\t/home/pi/check_fullscreen.py >/dev/null 2>&1"  >> /dev/shm/crontab.tmp
+su pi -c "cat /dev/shm/crontab.tmp | crontab"
 echo "display_rotate=0" >> /boot/config.txt
 
-echo "If everything worked properly, this pi automatically reboot soon."
+echo "If everything worked properly, this pi will show a webpage soon."
 sed -i "0,/def/ s#http://pi_director#${BASEURL}#" .xsession pifm_agent.py
 
 
