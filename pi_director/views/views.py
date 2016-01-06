@@ -86,7 +86,13 @@ def view_tagged(request):
     tags = request.matchdict['tags']
     tagged_pis = get_tagged_pis(tags)
 
-    return {'pis': tagged_pis, 'tags':tags}
+    return {'pis': tagged_pis, 'tags': tags}
+
+
+@view_config(route_name='wall', renderer="pi_director:templates/wall.mak", permission="anon")
+def view_wall(request):
+    PiList = get_pis()
+    return {'pis': PiList}
 
 
 @view_config(route_name='redirectme')

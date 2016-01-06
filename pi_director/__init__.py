@@ -4,7 +4,7 @@ from sqlalchemy import engine_from_config
 from pi_director.models.models import (
     DBSession,
     Base,
-    )
+)
 
 from pyramid.security import Allow, Authenticated, Everyone
 
@@ -59,6 +59,7 @@ def main(global_config, **settings):
     config.add_route('redirectme', '/go/{uid}')
     config.add_route('provision', '/provision')
     config.add_route('logs', '/logs/{uuid}')
+    config.add_route('wall', '/wall')
     config.add_request_method(LookupUser, 'user', reify=True)
     config.scan()
     return config.make_wsgi_app()
