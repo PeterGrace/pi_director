@@ -403,6 +403,14 @@ function reloadTagList(id) {
 
 $(document).ready(function() {
 
+	$('#iptAddTag').keypress(function (event) {
+		if (event.keyCode == 10 || event.keyCode == 13)
+		{
+			event.preventDefault();
+			$("#btnAddTag").click();
+		}
+	});
+
 	$('#tagModal').one('show.bs.modal', function(e) {
 		$("#btnAddTag").click(function(e) {
 			e.preventDefault();
@@ -415,6 +423,7 @@ $(document).ready(function() {
 				data: JSON.stringify({'uid':id,'tag':tag}),
 				success: function(result) {
 					reloadTagList(id);
+					$('#iptAddTag').val("")
 				},
 				failure: function(result) {
 					alert(result);
