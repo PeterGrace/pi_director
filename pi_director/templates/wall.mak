@@ -40,7 +40,7 @@
 
 		</div>
 
-	<span class="alert alert-warning">The following pis are offline:
+	<div class="alert alert-warning">The following pis are offline:
 	%for pi in offline:
 		%if pi.description == "":
 			${pi.uuid},
@@ -48,7 +48,7 @@
 			${pi.description},
 		%endif	
 	%endfor
-	</span>
+	</div>
 
 %endif	
 
