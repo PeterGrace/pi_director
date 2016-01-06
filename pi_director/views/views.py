@@ -95,12 +95,14 @@ def view_wall(request):
     tags = request.matchdict['tags']
     tagged_pis = get_tagged_pis(tags)
     show_list = []
+    offline_list = []
     for pi in tagged_pis:
         timediff = datetime.now() - pi.lastseen
-        if timediff.total_seconds() <= 432000:
-            ''' pi was seen in the last 5 days, so display '''
+        if timediff.total_seconds() <= 300:
             show_list.append(pi)
-    return {'pis': show_list}
+        else:
+            offline_list.append(pi)
+    return {'pis': show_list, 'offline': offline_list}
 
 
 @view_config(route_name='redirectme')
