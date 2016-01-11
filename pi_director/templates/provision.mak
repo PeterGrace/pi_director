@@ -46,7 +46,7 @@ wget ${BASEURL}/client_agent/check_fullscreen.py -O check_fullscreen.py
 wget ${BASEURL}/client_agent/pifm_agent.py -O pifm_agent.py
 
 chown pi.pi -R ~pi/.xsession ~pi/pifm_agent.py ~pi/keydown.sh ~pi/refresh.sh ~pi/frozen_screen_detect.sh
-chmod a+x .xsession keydown.sh refresh.sh frozen_screen_detect.sh pifm_agent.py
+chmod a+x .xsession keydown.sh refresh.sh frozen_screen_detect.sh pifm_agent.py check_fullscreen.py
 
 mkdir /home/pi/src
 cd /home/pi/src
