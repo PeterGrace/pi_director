@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 export DISPLAY=":0"
 WID=$(xdotool search --onlyvisible --class iceweasel|head -1)
